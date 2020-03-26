@@ -60,7 +60,7 @@ CREATE TABLE `semaforo` (
   PRIMARY KEY (`idSemaforo`),
   UNIQUE KEY `idSemaforo_UNIQUE` (`idSemaforo`),
   KEY `semaforo_cruce_idx` (`idCruce`),
-  CONSTRAINT `semaforo_cruce` FOREIGN KEY (`idCruce`) REFERENCES `cruce` (`idCruce`)
+  CONSTRAINT `semaforo_cruce` FOREIGN KEY (`idCruce`) REFERENCES `cruce` (`idCruce`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -88,7 +88,7 @@ CREATE TABLE `sensor` (
   `idSemaforo` int DEFAULT NULL,
   PRIMARY KEY (`idSensor`),
   KEY `sensor_semaforo_idx` (`idSemaforo`),
-  CONSTRAINT `sensor_semaforo` FOREIGN KEY (`idSemaforo`) REFERENCES `semaforo` (`idSemaforo`)
+  CONSTRAINT `sensor_semaforo` FOREIGN KEY (`idSemaforo`) REFERENCES `semaforo` (`idSemaforo`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -144,7 +144,7 @@ CREATE TABLE `valor_sensor_contaminacion` (
   `idSensor` int NOT NULL,
   PRIMARY KEY (`idValor_sensor_contaminacion`),
   KEY `valor_sensor_contaminacion_sensor_idx` (`idSensor`),
-  CONSTRAINT `valor_sensor_contaminacion_sensor` FOREIGN KEY (`idSensor`) REFERENCES `sensor` (`idSensor`)
+  CONSTRAINT `valor_sensor_contaminacion_sensor` FOREIGN KEY (`idSensor`) REFERENCES `sensor` (`idSensor`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -175,7 +175,7 @@ CREATE TABLE `valor_sensor_temp_hum` (
   `idSensor` int NOT NULL,
   PRIMARY KEY (`idValor_sensor_temp_hum`),
   KEY `valor_sensor_temp_hum_sensor_idx` (`idSensor`),
-  CONSTRAINT `valor_sensor_temp_hum_sensor` FOREIGN KEY (`idSensor`) REFERENCES `sensor` (`idSensor`)
+  CONSTRAINT `valor_sensor_temp_hum_sensor` FOREIGN KEY (`idSensor`) REFERENCES `sensor` (`idSensor`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -198,4 +198,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-03-27  0:13:53
+-- Dump completed on 2020-03-27  0:29:33
