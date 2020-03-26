@@ -23,14 +23,15 @@ DROP TABLE IF EXISTS `cruce`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `cruce` (
-  `cruceID` int NOT NULL AUTO_INCREMENT,
+  `idCruce` int NOT NULL,
+  `ipCruce` varchar(45) DEFAULT NULL,
   `nombreCruce` varchar(45) DEFAULT NULL,
-  `longitud` float NOT NULL,
-  `latitud` float NOT NULL,
-  `UsuarioID` int DEFAULT NULL,
-  PRIMARY KEY (`cruceID`),
-  KEY `cruce_usuario_idx` (`UsuarioID`),
-  CONSTRAINT `cruce_usuario` FOREIGN KEY (`UsuarioID`) REFERENCES `usuario` (`idUsuario`) ON DELETE CASCADE ON UPDATE CASCADE
+  `initialTimestamp` bigint DEFAULT NULL,
+  `idUsuario` int NOT NULL,
+  PRIMARY KEY (`idCruce`),
+  UNIQUE KEY `idCruce_UNIQUE` (`idCruce`),
+  KEY `cruce_usuario_idx` (`idUsuario`),
+  CONSTRAINT `cruce_usuario` FOREIGN KEY (`idUsuario`) REFERENCES `usuario` (`idUsuario`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -40,34 +41,8 @@ CREATE TABLE `cruce` (
 
 LOCK TABLES `cruce` WRITE;
 /*!40000 ALTER TABLE `cruce` DISABLE KEYS */;
+INSERT INTO `cruce` VALUES (1,'100.100.100.100','Avda. Palmera - Luca de Tena',111111111,1),(2,'100.100.100.101','Avda. Palmera - Cardenal Ilundain',111111112,2);
 /*!40000 ALTER TABLE `cruce` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `luz-semaforo`
---
-
-DROP TABLE IF EXISTS `luz-semaforo`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `luz-semaforo` (
-  `luzSemaforoID` int NOT NULL AUTO_INCREMENT,
-  `ColorLuz` varchar(45) NOT NULL,
-  `TimeStamp` bigint DEFAULT NULL,
-  `SemaforoID` int DEFAULT NULL,
-  PRIMARY KEY (`luzSemaforoID`),
-  KEY `SemaforoID_idx` (`SemaforoID`),
-  CONSTRAINT `SemaforoID` FOREIGN KEY (`SemaforoID`) REFERENCES `semaforo` (`idSemaforo`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `luz-semaforo`
---
-
-LOCK TABLES `luz-semaforo` WRITE;
-/*!40000 ALTER TABLE `luz-semaforo` DISABLE KEYS */;
-/*!40000 ALTER TABLE `luz-semaforo` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -78,15 +53,15 @@ DROP TABLE IF EXISTS `semaforo`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `semaforo` (
-  `idSemaforo` int NOT NULL AUTO_INCREMENT COMMENT 'Deberia venir marcado por el propio ID del dispositivo y no autoincremental\\n',
-  `ip` varchar(45) DEFAULT NULL,
-  `name` varchar(45) DEFAULT NULL,
-  `initialTimeStamp` bigint DEFAULT NULL,
-  `CruceID` int DEFAULT NULL,
+  `idSemaforo` int NOT NULL AUTO_INCREMENT,
+  `color` varchar(45) NOT NULL,
+  `timestamp` bigint DEFAULT NULL,
+  `idCruce` int NOT NULL,
   PRIMARY KEY (`idSemaforo`),
-  KEY `semaforo_cruce_idx` (`CruceID`),
-  CONSTRAINT `semaforo_cruce` FOREIGN KEY (`CruceID`) REFERENCES `cruce` (`cruceID`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='Dispositivo en el que van los sensores/actuadores';
+  UNIQUE KEY `idSemaforo_UNIQUE` (`idSemaforo`),
+  KEY `semaforo_cruce_idx` (`idCruce`),
+  CONSTRAINT `semaforo_cruce` FOREIGN KEY (`idCruce`) REFERENCES `cruce` (`idCruce`)
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -95,7 +70,7 @@ CREATE TABLE `semaforo` (
 
 LOCK TABLES `semaforo` WRITE;
 /*!40000 ALTER TABLE `semaforo` DISABLE KEYS */;
-INSERT INTO `semaforo` VALUES (1,'192.168.0.108','Casa',123456456436,NULL),(2,'150.215.489.215','Trabajo',123841234738,NULL);
+INSERT INTO `semaforo` VALUES (1,'Verde',10000,1),(2,'Verde',10000,1),(3,'Rojo',10000,1),(4,'Rojo',10000,1),(5,'Verde',20000,2),(6,'Verde',20000,2),(7,'Rojo',20000,2),(8,'Rojo',20000,2);
 /*!40000 ALTER TABLE `semaforo` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -107,14 +82,14 @@ DROP TABLE IF EXISTS `sensor`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `sensor` (
-  `sensorID` int NOT NULL,
-  `tipo` varchar(45) NOT NULL,
-  `nombre` varchar(45) NOT NULL,
-  `idDispositivo` int DEFAULT NULL COMMENT 'Hace referencia al sensor concreto pero no a sus valores',
-  PRIMARY KEY (`sensorID`),
-  KEY `sensor_device_idx` (`idDispositivo`),
-  CONSTRAINT `sensor_device` FOREIGN KEY (`idDispositivo`) REFERENCES `semaforo` (`idSemaforo`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+  `idSensor` int NOT NULL AUTO_INCREMENT,
+  `tipoSensor` varchar(45) NOT NULL,
+  `nombreSensor` varchar(45) NOT NULL,
+  `idSemaforo` int DEFAULT NULL,
+  PRIMARY KEY (`idSensor`),
+  KEY `sensor_semaforo_idx` (`idSemaforo`),
+  CONSTRAINT `sensor_semaforo` FOREIGN KEY (`idSemaforo`) REFERENCES `semaforo` (`idSemaforo`)
+) ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -123,38 +98,8 @@ CREATE TABLE `sensor` (
 
 LOCK TABLES `sensor` WRITE;
 /*!40000 ALTER TABLE `sensor` DISABLE KEYS */;
-INSERT INTO `sensor` VALUES (1,'Temp','termometro',1),(2,'Hum','Humedad',1),(3,'Temp','Termometro',2),(4,'Hum','Humedad',2);
+INSERT INTO `sensor` VALUES (1,'TempHum','TempHum1',1),(3,'CO2','ContAire1',1),(4,'Ruido','ContAcust1',1),(5,'CO2','ContAire2',2),(6,'Ruido','ContAcust2',2),(7,'CO2','ContAire3',3),(8,'Ruido','ContAcust3',3),(9,'CO2','ContAire4',4),(10,'Ruido','ContAcust4',4),(11,'TempHum','TempHum2',5),(13,'CO2','ContAire5',5),(14,'Ruido','ContAcust5',5),(15,'CO2','ContAire6',6),(16,'Ruido','ContAcust6',6),(17,'CO2','ContAire7',7),(18,'Ruido','ContAcust7',7),(19,'CO2','ContAire8',8),(20,'Ruido','ContAcust8',8);
 /*!40000 ALTER TABLE `sensor` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `sensor-temperatura-humedad`
---
-
-DROP TABLE IF EXISTS `sensor-temperatura-humedad`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `sensor-temperatura-humedad` (
-  `sensor-temperaturaID` int NOT NULL,
-  `accuracyTemp` float DEFAULT NULL,
-  `valorTemp` float NOT NULL,
-  `valorHumedad` float NOT NULL,
-  `TimeStamp` bigint DEFAULT NULL,
-  `sensorID` int DEFAULT NULL,
-  `accuracyHum` float DEFAULT NULL,
-  PRIMARY KEY (`sensor-temperaturaID`),
-  KEY `sensorID_idx` (`sensorID`),
-  CONSTRAINT `sensorTemHum_sensor` FOREIGN KEY (`sensorID`) REFERENCES `sensor` (`sensorID`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `sensor-temperatura-humedad`
---
-
-LOCK TABLES `sensor-temperatura-humedad` WRITE;
-/*!40000 ALTER TABLE `sensor-temperatura-humedad` DISABLE KEYS */;
-/*!40000 ALTER TABLE `sensor-temperatura-humedad` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -169,7 +114,7 @@ CREATE TABLE `usuario` (
   `nombre` varchar(45) NOT NULL,
   `apellidos` varchar(45) DEFAULT NULL,
   `dni` varchar(45) DEFAULT NULL,
-  `Fnacimiento` bigint DEFAULT NULL,
+  `fnacimiento` bigint DEFAULT NULL,
   PRIMARY KEY (`idUsuario`)
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -180,37 +125,68 @@ CREATE TABLE `usuario` (
 
 LOCK TABLES `usuario` WRITE;
 /*!40000 ALTER TABLE `usuario` DISABLE KEYS */;
-INSERT INTO `usuario` VALUES (1,'Luismi','Soria','2452451T',12334242),(2,'Rosa','Rodriguez','2342514T',23524542);
+INSERT INTO `usuario` VALUES (1,'Alberto','Naranjo','12345698X',161098),(2,'José Joaquín','Comitre','9876541',181099);
 /*!40000 ALTER TABLE `usuario` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
--- Table structure for table `valores-sensor-contaminacion`
+-- Table structure for table `valor_sensor_contaminacion`
 --
 
-DROP TABLE IF EXISTS `valores-sensor-contaminacion`;
+DROP TABLE IF EXISTS `valor_sensor_contaminacion`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `valores-sensor-contaminacion` (
-  `idValor-sensor` int NOT NULL AUTO_INCREMENT,
-  `sensorID` int NOT NULL,
-  `valor` float NOT NULL,
-  `accuracy` float NOT NULL COMMENT 'Mide la precision del sensor',
-  `timeStamp` bigint DEFAULT NULL,
-  PRIMARY KEY (`idValor-sensor`),
-  KEY `valores_sensor_sensor_idx` (`sensorID`),
-  CONSTRAINT `valores_sensor_sensor` FOREIGN KEY (`sensorID`) REFERENCES `sensor` (`sensorID`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+CREATE TABLE `valor_sensor_contaminacion` (
+  `idValor_sensor_contaminacion` int NOT NULL AUTO_INCREMENT,
+  `value` float NOT NULL,
+  `accuracy` float NOT NULL,
+  `timestamp` bigint DEFAULT NULL,
+  `idSensor` int NOT NULL,
+  PRIMARY KEY (`idValor_sensor_contaminacion`),
+  KEY `valor_sensor_contaminacion_sensor_idx` (`idSensor`),
+  CONSTRAINT `valor_sensor_contaminacion_sensor` FOREIGN KEY (`idSensor`) REFERENCES `sensor` (`idSensor`)
+) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `valores-sensor-contaminacion`
+-- Dumping data for table `valor_sensor_contaminacion`
 --
 
-LOCK TABLES `valores-sensor-contaminacion` WRITE;
-/*!40000 ALTER TABLE `valores-sensor-contaminacion` DISABLE KEYS */;
-INSERT INTO `valores-sensor-contaminacion` VALUES (1,1,37,1,45231234),(2,2,65,5,3424623345),(3,3,36,2,3462345323),(4,4,70,7,564562435);
-/*!40000 ALTER TABLE `valores-sensor-contaminacion` ENABLE KEYS */;
+LOCK TABLES `valor_sensor_contaminacion` WRITE;
+/*!40000 ALTER TABLE `valor_sensor_contaminacion` DISABLE KEYS */;
+INSERT INTO `valor_sensor_contaminacion` VALUES (1,1.6,1,99999999,3),(2,1.1,1,99999999,4),(3,1.8,1,99999999,5),(4,1.9,1,99999999,6),(5,2.2,1,99999999,7),(6,3.2,1,99999999,8),(7,1.1,1,99999999,9),(8,2.2,1,99999999,10),(9,1.15,1,99999999,13),(10,2.05,1,99999999,14),(11,3.02,1,99999999,15),(12,2.33,1,99999999,16),(13,2.44,1,99999999,17),(14,3.05,1,99999999,18),(15,0.95,1,99999999,19),(16,2.69,1,99999999,20);
+/*!40000 ALTER TABLE `valor_sensor_contaminacion` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `valor_sensor_temp_hum`
+--
+
+DROP TABLE IF EXISTS `valor_sensor_temp_hum`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `valor_sensor_temp_hum` (
+  `idValor_sensor_temp_hum` int NOT NULL AUTO_INCREMENT,
+  `valueTemp` float NOT NULL,
+  `accuracyTemp` float NOT NULL,
+  `valueHum` float NOT NULL,
+  `accuracyHum` float NOT NULL,
+  `timestamp` bigint DEFAULT NULL,
+  `idSensor` int NOT NULL,
+  PRIMARY KEY (`idValor_sensor_temp_hum`),
+  KEY `valor_sensor_temp_hum_sensor_idx` (`idSensor`),
+  CONSTRAINT `valor_sensor_temp_hum_sensor` FOREIGN KEY (`idSensor`) REFERENCES `sensor` (`idSensor`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `valor_sensor_temp_hum`
+--
+
+LOCK TABLES `valor_sensor_temp_hum` WRITE;
+/*!40000 ALTER TABLE `valor_sensor_temp_hum` DISABLE KEYS */;
+INSERT INTO `valor_sensor_temp_hum` VALUES (1,30,2,50,5,33333333,1),(2,31,2,40,3,33333333,11);
+/*!40000 ALTER TABLE `valor_sensor_temp_hum` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
@@ -222,4 +198,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-03-26 13:54:36
+-- Dump completed on 2020-03-27  0:13:53
