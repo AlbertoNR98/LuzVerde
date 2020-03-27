@@ -46,6 +46,34 @@ INSERT INTO `cruce` VALUES (1,'100.100.100.100','Avda. Palmera - Luca de Tena',1
 UNLOCK TABLES;
 
 --
+-- Table structure for table `luz_semaforo`
+--
+
+DROP TABLE IF EXISTS `luz_semaforo`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `luz_semaforo` (
+  `idLuz_Semaforo` int NOT NULL AUTO_INCREMENT,
+  `color` varchar(45) DEFAULT NULL,
+  `timestamp` bigint DEFAULT NULL,
+  `idSemaforo` int DEFAULT NULL,
+  PRIMARY KEY (`idLuz_Semaforo`),
+  KEY `luz_semaforo_semaforo_idx` (`idSemaforo`),
+  CONSTRAINT `luz_semaforo_semaforo` FOREIGN KEY (`idSemaforo`) REFERENCES `semaforo` (`idSemaforo`)
+) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `luz_semaforo`
+--
+
+LOCK TABLES `luz_semaforo` WRITE;
+/*!40000 ALTER TABLE `luz_semaforo` DISABLE KEYS */;
+INSERT INTO `luz_semaforo` VALUES (1,'Verde',100000,1),(2,'Verde',100000,2),(3,'Rojo',100000,3),(4,'Rojo',100000,4),(5,'Verde',100300,5),(6,'Verde',100300,6),(7,'Rojo',100300,7),(8,'Rojo',100300,8),(9,'Rojo',110000,1),(10,'Rojo',110000,2),(11,'Verde',110000,3),(12,'Verde',110000,4),(13,'Rojo',110300,5),(14,'Rojo',110300,6),(15,'Verde',110300,7),(16,'Verde',110300,8);
+/*!40000 ALTER TABLE `luz_semaforo` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `semaforo`
 --
 
@@ -54,9 +82,8 @@ DROP TABLE IF EXISTS `semaforo`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `semaforo` (
   `idSemaforo` int NOT NULL AUTO_INCREMENT,
-  `color` varchar(45) NOT NULL,
-  `timestamp` bigint DEFAULT NULL,
   `idCruce` int NOT NULL,
+  `nombreSemaforo` varchar(45) DEFAULT NULL,
   PRIMARY KEY (`idSemaforo`),
   UNIQUE KEY `idSemaforo_UNIQUE` (`idSemaforo`),
   KEY `semaforo_cruce_idx` (`idCruce`),
@@ -70,7 +97,7 @@ CREATE TABLE `semaforo` (
 
 LOCK TABLES `semaforo` WRITE;
 /*!40000 ALTER TABLE `semaforo` DISABLE KEYS */;
-INSERT INTO `semaforo` VALUES (1,'Verde',10000,1),(2,'Verde',10000,1),(3,'Rojo',10000,1),(4,'Rojo',10000,1),(5,'Verde',20000,2),(6,'Verde',20000,2),(7,'Rojo',20000,2),(8,'Rojo',20000,2);
+INSERT INTO `semaforo` VALUES (1,1,'AVP1'),(2,1,'AVP2'),(3,1,'MS1'),(4,1,'MS2'),(5,2,'AVP1'),(6,2,'AVP2'),(7,2,'CI1'),(8,2,'CI2');
 /*!40000 ALTER TABLE `semaforo` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -198,4 +225,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-03-27  0:29:33
+-- Dump completed on 2020-03-27 19:12:15
