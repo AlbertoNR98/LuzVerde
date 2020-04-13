@@ -1,6 +1,6 @@
 package luzVerdeVerticles;
 
-import Tipos.valorSensorContaminacion;
+import luzVerdeTipos.ValorSensorContaminacion;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Promise;
 import io.vertx.core.json.JsonArray;
@@ -51,7 +51,7 @@ public class DatabaseVerticle extends AbstractVerticle{
 						System.out.println("El numero de elementos obtenidos es "+ resultSet.size());
 						JsonArray result = new JsonArray();
 						for (Row row : resultSet) {
-							result.add(JsonObject.mapFrom(new valorSensorContaminacion(row.getInteger("idValor_sensor_contaminacion"), row.getInteger("idSensor"),
+							result.add(JsonObject.mapFrom(new ValorSensorContaminacion(row.getInteger("idValor_sensor_contaminacion"), row.getInteger("idSensor"),
 									row.getFloat("value"), row.getFloat("accuracy"), row.getLong("timestamp"))));
 						}
 						
