@@ -94,6 +94,6 @@ public class ValorSensorContaminacion {
 			return false;
 		return true;
 	}
-
+	
 	
 }
