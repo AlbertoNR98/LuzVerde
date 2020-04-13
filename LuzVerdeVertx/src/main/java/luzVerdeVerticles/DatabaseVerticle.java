@@ -3,6 +3,7 @@ package luzVerdeVerticles;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Promise;
 import io.vertx.ext.web.Router;
+import io.vertx.ext.web.handler.BodyHandler;
 import io.vertx.mysqlclient.MySQLConnectOptions;
 import io.vertx.mysqlclient.MySQLPool;
 import io.vertx.sqlclient.PoolOptions;
@@ -32,6 +33,7 @@ public class DatabaseVerticle extends AbstractVerticle{
 		});
 		
 		//Peticiones
+		router.route("links").blockingHandler(BodyHandler.create());
 		
 	}
 }
