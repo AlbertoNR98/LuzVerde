@@ -39,6 +39,7 @@ public class DatabaseVerticle extends AbstractVerticle{
 		Router router = Router.router(vertx);
 		vertx.createHttpServer().requestHandler(router::handle).listen(8082, result -> {
 			if(result.succeeded()) {
+				System.out.println("Todo OK");
 				startPromise.complete();
 			}else {
 				startPromise.fail(result.cause());
