@@ -53,6 +53,7 @@ public class DatabaseVerticle extends AbstractVerticle{
 		router.get("/api/semaforo/semaforos/:idCruce").handler(this::getSemaforoByCruce);
 		router.get("/api/luz/luces/:idSemaforo").handler(this::getLuzBySemaforo);
 		router.get("/api/cruce/cruces/:idUsuario").handler(this::getCruceByUsuario);
+		
 	}
 	
 	private void getValueBySensor (RoutingContext routingContext) {
