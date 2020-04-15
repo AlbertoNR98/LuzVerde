@@ -75,12 +75,20 @@ public class DatabaseVerticle extends AbstractVerticle{
 		router.put("/api/cruces/:idCruce").handler(this::updateCruceByID);
 		router.delete("/api/cruces/:idCruce").handler(this::deleteCruceByID);
 		
+			//Semáforo
+		router.route("/api/semaforos").handler(BodyHandler.create());
+		router.route("/api/semaforos*").handler(BodyHandler.create());
+		
+		router.get("/api/semaforos/:idCruce").handler(this::getSemaforoByCruce);
+		router.get("/api/semaforos").blockingHandler(this::getAllSemaforos);
+		router.post("/api/semaforos").handler(this::postSemaforo);
+		router.put("/api/semaforos/:idSemaforo").handler(this::updateNombreSemaforoByID);
+		
 		
 		
 		router.get("/api/valor_sensor_contaminacion/values/:idSensor").handler(this::getValueBySensorCont);
 		router.get("/api/valor_sensor_temp_hum/values/:idSensor").handler(this::getValueBySensorTemp);
 		router.get("/api/sensor/sensors/:idSemaforo").handler(this::getSensorBySemaforo);
-		router.get("/api/semaforo/semaforos/:idCruce").handler(this::getSemaforoByCruce);
 		router.get("/api/luz/luces/:idSemaforo").handler(this::getLuzBySemaforo);
 		
 		
@@ -151,18 +159,15 @@ public class DatabaseVerticle extends AbstractVerticle{
 		JsonObject body = routingContext.getBodyAsJson();
 		mySQLPool.query("UPDATE luzverde.usuario SET nombre = '" + body.getString("nombre") + 
 				"', apellidos = '" + body.getString("apellidos") + "', dni = '" + body.getString("dni") + "', fnacimiento = " + body.getInteger("fnacimiento")+" WHERE idUsuario = " +routingContext.request().getParam("idUsuario"),
-	
-				res -> {
-					
-			if(res.succeeded()) {
-				System.out.println("Usuario actualizado");
-				routingContext.response().setStatusCode(200).putHeader("content-type", "application/json").end(body.encodePrettily());
-			}else {
-				System.out.println("Error al hacer la operación");
-				routingContext.response().setStatusCode(401).putHeader("content-type", "application/json").end(JsonObject.mapFrom(res.cause()).encodePrettily());
-			}
-			
-		});
+				res -> {		
+					if(res.succeeded()) {
+						System.out.println("Usuario actualizado");
+						routingContext.response().setStatusCode(200).putHeader("content-type", "application/json").end(body.encodePrettily());
+					}else {
+						System.out.println("Error al hacer la operación");
+						routingContext.response().setStatusCode(401).putHeader("content-type", "application/json").end(JsonObject.mapFrom(res.cause()).encodePrettily());
+					}
+				});
 	}
 	
 	private void deleteUserByID(RoutingContext routingContext) {
@@ -268,6 +273,80 @@ public class DatabaseVerticle extends AbstractVerticle{
 		});
 	}
 	
+		//Semáforos
+	private void getSemaforoByCruce (RoutingContext routingContext) {
+		mySQLPool.query("SELECT * FROM luzverde.semaforo WHERE idCruce = "+ routingContext.request().getParam("idCruce"), 
+				res -> {
+					if(res.succeeded()) {
+						RowSet<Row>  resultSet = res.result();
+						System.out.println("El número de elementos obtenidos es "+ resultSet.size());
+						JsonArray result = new JsonArray();
+						for (Row row : resultSet) {
+							result.add(JsonObject.mapFrom(new Semaforo(row.getInteger("idSemaforo"), row.getInteger("idCruce"), row.getString("nombreSemaforo"))));
+						}
+						routingContext.response().setStatusCode(200).putHeader("content-type", "application/json").end(result.encodePrettily());						
+					}else {
+						routingContext.response().setStatusCode(401).putHeader("content-type", "application/json").end((JsonObject.mapFrom(res.cause()).encodePrettily()));
+						System.out.println("Error al hacer la operación");
+					}
+				});
+	}
+	
+	private void getAllSemaforos(RoutingContext routingContext) {
+		mySQLPool.query("SELECT * FROM luzverde.semaforo", res ->{
+			if(res.succeeded()) {
+				RowSet<Row> resultSet = res.result();
+				System.out.println(resultSet.size()+" elementos obtenidos");
+				JsonArray result = new JsonArray();
+				for(Row row : resultSet) {
+					result.add(JsonObject.mapFrom(new Semaforo(row.getInteger("idSemaforo"), row.getInteger("idCruce"), row.getString("nombreSemaforo"))));
+				}
+				routingContext.response().setStatusCode(200).putHeader("content-type", "application/json").end(result.encodePrettily());						
+
+			}else {
+				routingContext.response().setStatusCode(401).putHeader("content-type", "application/json").end((JsonObject.mapFrom(res.cause()).encodePrettily()));
+				System.out.println("Error al hacer la operación");
+			}
+		});
+	}
+	
+	private void postSemaforo(RoutingContext routingContext) {
+		Semaforo sem = Json.decodeValue(routingContext.getBodyAsString(), Semaforo.class);
+		mySQLPool.preparedQuery(
+				"INSERT INTO luzverde.semaforo (idCruce, nombreSemaforo) VALUES (?,?)",
+				Tuple.of(sem.getIdCruce(), sem.getNombreSemaforo()),
+				res -> {
+					if (res.succeeded()) {
+						System.out.println(res.result().rowCount()+" filas insertadas");
+						long id = res.result().property(MySQLClient.LAST_INSERTED_ID);
+						sem.setIdSemaforo((int) id);
+						routingContext.response().setStatusCode(200).putHeader("content-type", "application/json")
+								.end(JsonObject.mapFrom(sem).encodePrettily());
+					} else {
+						System.out.println("Error al hacer la operación");
+						System.out.println(res.cause().toString());
+						routingContext.response().setStatusCode(401).putHeader("content-type", "application/json")
+								.end((JsonObject.mapFrom(res.cause()).encodePrettily()));
+					}
+				});
+	}
+	
+	private void updateNombreSemaforoByID(RoutingContext routingContext) {
+		JsonObject body = routingContext.getBodyAsJson();
+		mySQLPool.query("UPDATE luzverde.semaforo SET nombreSemaforo = '" + body.getString("nombreSemaforo") + 
+				"' WHERE idSemaforo = " +routingContext.request().getParam("idSemaforo"),
+				res -> {		
+					if(res.succeeded()) {
+						System.out.println("Semáforo actualizado");
+						routingContext.response().setStatusCode(200).putHeader("content-type", "application/json").end(body.encodePrettily());
+					}else {
+						System.out.println("Error al hacer la operación");
+						routingContext.response().setStatusCode(401).putHeader("content-type", "application/json").end(JsonObject.mapFrom(res.cause()).encodePrettily());
+					}	
+		});
+	}
+	
+	
 	private void getValueBySensorCont (RoutingContext routingContext) {
 		mySQLPool.query("SELECT * FROM luzverde.valor_sensor_contaminacion WHERE idSensor = "+ routingContext.request().getParam("idSensor"), 
 				res -> {
@@ -325,24 +404,7 @@ public class DatabaseVerticle extends AbstractVerticle{
 					}
 				});
 	}
-	private void getSemaforoByCruce (RoutingContext routingContext) {
-		mySQLPool.query("SELECT * FROM luzverde.semaforo WHERE idCruce = "+ routingContext.request().getParam("idCruce"), 
-				res -> {
-					if(res.succeeded()) {
-						RowSet<Row>  resultSet = res.result();
-						System.out.println("El numero de elementos obtenidos es "+ resultSet.size());
-						JsonArray result = new JsonArray();
-						for (Row row : resultSet) {
-							result.add(JsonObject.mapFrom(new Semaforo(row.getInteger("idSemaforo"), row.getInteger("idCruce"), row.getString("nombreSemaforo"))));
-						}
-						
-						routingContext.response().setStatusCode(200).putHeader("content-type", "application/json").end(result.encodePrettily());						
-					}else {
-						routingContext.response().setStatusCode(401).putHeader("content-type", "application/json").end((JsonObject.mapFrom(res.cause()).encodePrettily()));
-						System.out.println("error");
-					}
-				});
-	}
+	
 	private void getLuzBySemaforo (RoutingContext routingContext) {
 		mySQLPool.query("SELECT * FROM luzverde.luz_semaforo WHERE idSemaforo = "+ routingContext.request().getParam("idSemaforo"), 
 				res -> {
