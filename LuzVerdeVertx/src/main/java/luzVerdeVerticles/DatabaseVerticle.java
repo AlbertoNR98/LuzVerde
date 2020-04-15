@@ -65,12 +65,24 @@ public class DatabaseVerticle extends AbstractVerticle{
 		router.put("/api/usuarios/:idUsuario").handler(this::updateUserByID);
 		router.delete("/api/usuarios/:idUsuario").handler(this::deleteUserByID);
 		
-		router.get("/api/valor_sensor_contaminacion/values/:idSensor").handler(this::getValueBySensor);
-		router.get("/api/valor_sensor_temp_hum/values/:idSensor").handler(this::getValueBySensor2);
+			//Cruce
+		router.route("/api/cruces").handler(BodyHandler.create());
+		router.route("/api/cruces*").handler(BodyHandler.create());
+		
+		router.get("/api/cruces/:idUsuario").handler(this::getCruceByUsuario);
+		router.get("/api/cruces").handler(this::getAllCruces);
+		router.post("/api/cruces").handler(this::postCruce);
+		router.put("/api/cruces/:idCruce").handler(this::updateCruceByID);
+		router.delete("/api/cruces/:idCruce").handler(this::deleteCruceByID);
+		
+		
+		
+		router.get("/api/valor_sensor_contaminacion/values/:idSensor").handler(this::getValueBySensorCont);
+		router.get("/api/valor_sensor_temp_hum/values/:idSensor").handler(this::getValueBySensorTemp);
 		router.get("/api/sensor/sensors/:idSemaforo").handler(this::getSensorBySemaforo);
 		router.get("/api/semaforo/semaforos/:idCruce").handler(this::getSemaforoByCruce);
 		router.get("/api/luz/luces/:idSemaforo").handler(this::getLuzBySemaforo);
-		router.get("/api/cruce/cruces/:idUsuario").handler(this::getCruceByUsuario);
+		
 		
 	}
 	
@@ -106,7 +118,7 @@ public class DatabaseVerticle extends AbstractVerticle{
 				routingContext.response().setStatusCode(200).putHeader("content-type", "application/json").end(result.encodePrettily());						
 
 			}else {
-				System.out.println("Error al hacer la operación\n");
+				System.out.println("Error al hacer la operación");
 				routingContext.response().setStatusCode(401).putHeader("content-type", "application/json").end((JsonObject.mapFrom(res.cause()).encodePrettily()));
 			}
 		});
@@ -127,7 +139,7 @@ public class DatabaseVerticle extends AbstractVerticle{
 						routingContext.response().setStatusCode(200).putHeader("content-type", "application/json")
 								.end(JsonObject.mapFrom(user).encodePrettily());
 					} else {
-						System.out.println("Error al hacer la operación\n");
+						System.out.println("Error al hacer la operación");
 						System.out.println(res.cause().toString());
 						routingContext.response().setStatusCode(401).putHeader("content-type", "application/json")
 								.end((JsonObject.mapFrom(res.cause()).encodePrettily()));
@@ -143,10 +155,10 @@ public class DatabaseVerticle extends AbstractVerticle{
 				res -> {
 					
 			if(res.succeeded()) {
-				System.out.println("Usuario actualizado\n");
+				System.out.println("Usuario actualizado");
 				routingContext.response().setStatusCode(200).putHeader("content-type", "application/json").end(body.encodePrettily());
 			}else {
-				System.out.println("Error al hacer la operación\n");
+				System.out.println("Error al hacer la operación");
 				routingContext.response().setStatusCode(401).putHeader("content-type", "application/json").end(JsonObject.mapFrom(res.cause()).encodePrettily());
 			}
 			
@@ -157,15 +169,106 @@ public class DatabaseVerticle extends AbstractVerticle{
 		mySQLPool.query("DELETE FROM luzverde.usuario WHERE idUsuario = "+routingContext.request().getParam("idUsuario"), 
 				res -> {
 					if(res.succeeded()) {
-						System.out.println("Usuario borrado\n");
+						System.out.println("Usuario borrado");
 						routingContext.response().setStatusCode(200).putHeader("content-type", "application/json").end();
 					}else {
-						System.out.println("Error al hacer la operación\n");
+						System.out.println("Error al hacer la operación");
 						routingContext.response().setStatusCode(401).putHeader("content-type", "application/json").end(JsonObject.mapFrom(res.cause()).encodePrettily());
 					}
 		});
 	}
-	private void getValueBySensor (RoutingContext routingContext) {
+	
+		//Cruce
+	private void getCruceByUsuario (RoutingContext routingContext) {
+		mySQLPool.query("SELECT * FROM luzverde.cruce WHERE idUsuario = "+ routingContext.request().getParam("idUsuario"), 
+				res -> {
+					if(res.succeeded()) {
+						RowSet<Row>  resultSet = res.result();
+						System.out.println("El número de elementos obtenidos es "+ resultSet.size());
+						JsonArray result = new JsonArray();
+						for (Row row : resultSet) {
+							result.add(JsonObject.mapFrom(new Cruce(row.getInteger("idCruce"), row.getString("ipCruce"), row.getString("nombreCruce"),
+									row.getLong("initialTimestamp"), row.getInteger("idUsuario"))));
+						}
+						
+						routingContext.response().setStatusCode(200).putHeader("content-type", "application/json").end(result.encodePrettily());						
+					}else {
+						routingContext.response().setStatusCode(401).putHeader("content-type", "application/json").end((JsonObject.mapFrom(res.cause()).encodePrettily()));
+						System.out.println("Error al hacer la operación");
+					}
+				});
+	}
+	
+	private void getAllCruces(RoutingContext routingContext) {
+		mySQLPool.query("SELECT * FROM luzverde.cruce", res ->{
+			if(res.succeeded()) {
+				RowSet<Row> resultSet = res.result();
+				System.out.println(resultSet.size()+" elementos obtenidos");
+				JsonArray result = new JsonArray();
+				for(Row row : resultSet) {
+					result.add(JsonObject.mapFrom(new Cruce(row.getInteger("idCruce"), row.getString("ipCruce"), row.getString("nombreCruce"), row.getInteger("initialTimestamp"), row.getInteger("idUsuario"))));
+				}
+				routingContext.response().setStatusCode(200).putHeader("content-type", "application/json").end(result.encodePrettily());						
+
+			}else {
+				routingContext.response().setStatusCode(401).putHeader("content-type", "application/json").end((JsonObject.mapFrom(res.cause()).encodePrettily()));
+				System.out.println("Error al hacer la operación");
+			}
+		});
+	}
+	
+	private void postCruce(RoutingContext routingContext) {
+		Cruce cruce = Json.decodeValue(routingContext.getBodyAsString(), Cruce.class);
+		mySQLPool.preparedQuery(
+				"INSERT INTO luzverde.cruce (idCruce, ipCruce, nombreCruce, initialTimestamp, idUsuario) VALUES (?,?,?,?,?)",
+				Tuple.of(cruce.getIdCruce(), cruce.getIpCruce(), cruce.getNombreCruce(), cruce.getInitialTimestamp(), cruce.getIdUsuario()),
+				res -> {
+					if (res.succeeded()) {
+						System.out.println(res.result().rowCount()+" filas insertadas");
+						
+						long id = res.result().property(MySQLClient.LAST_INSERTED_ID);
+						cruce.setIdUsuario((int) id);
+						
+						routingContext.response().setStatusCode(200).putHeader("content-type", "application/json")
+								.end(JsonObject.mapFrom(cruce).encodePrettily());
+					} else {
+						System.out.println("Error al hacer la operación");
+						System.out.println(res.cause().toString());
+						routingContext.response().setStatusCode(401).putHeader("content-type", "application/json")
+								.end((JsonObject.mapFrom(res.cause()).encodePrettily()));
+					}
+				});
+	}
+	
+	private void updateCruceByID(RoutingContext routingContext) {
+		JsonObject body = routingContext.getBodyAsJson();
+		mySQLPool.query("UPDATE luzverde.cruce SET ipCruce = '" + body.getString("ipCruce") + 
+				"', nombreCruce = '" + body.getString("nombreCruce") + "', initialTimestamp = " + body.getLong("initialTimestamp") + ", idUsuario = " + body.getInteger("idUsuario")+" WHERE idCruce = " +routingContext.request().getParam("idCruce"),
+				res -> {		
+					if(res.succeeded()) {
+						System.out.println("Cruce actualizado");
+						routingContext.response().setStatusCode(200).putHeader("content-type", "application/json").end(body.encodePrettily());
+					}else {
+						System.out.println("Error al hacer la operación");
+						routingContext.response().setStatusCode(401).putHeader("content-type", "application/json").end(JsonObject.mapFrom(res.cause()).encodePrettily());
+					}	
+		});
+	}
+	
+	private void deleteCruceByID(RoutingContext routingContext) {
+		mySQLPool.query("DELETE FROM luzverde.cruce WHERE idCruce = "+routingContext.request().getParam("idCruce"), 
+				res -> {
+					if(res.succeeded()) {
+						System.out.println("Cruce borrado");
+						routingContext.response().setStatusCode(200).putHeader("content-type", "application/json").end();
+					}else {
+						System.out.println("Error al hacer la operación");
+						routingContext.response().setStatusCode(401).putHeader("content-type", "application/json").end(JsonObject.mapFrom(res.cause()).encodePrettily());
+					}
+		});
+	}
+	
+	private void getValueBySensorCont (RoutingContext routingContext) {
 		mySQLPool.query("SELECT * FROM luzverde.valor_sensor_contaminacion WHERE idSensor = "+ routingContext.request().getParam("idSensor"), 
 				res -> {
 					if(res.succeeded()) {
@@ -184,7 +287,7 @@ public class DatabaseVerticle extends AbstractVerticle{
 					}
 				});
 	}
-	private void getValueBySensor2 (RoutingContext routingContext) {
+	private void getValueBySensorTemp (RoutingContext routingContext) {
 		mySQLPool.query("SELECT * FROM luzverde.valor_sensor_temp_hum WHERE idSensor = "+ routingContext.request().getParam("idSensor"), 
 				res -> {
 					if(res.succeeded()) {
@@ -258,24 +361,6 @@ public class DatabaseVerticle extends AbstractVerticle{
 					}
 				});
 	}
-	private void getCruceByUsuario (RoutingContext routingContext) {
-		mySQLPool.query("SELECT * FROM luzverde.cruce WHERE idUsuario = "+ routingContext.request().getParam("idUsuario"), 
-				res -> {
-					if(res.succeeded()) {
-						RowSet<Row>  resultSet = res.result();
-						System.out.println("El numero de elementos obtenidos es "+ resultSet.size());
-						JsonArray result = new JsonArray();
-						for (Row row : resultSet) {
-							result.add(JsonObject.mapFrom(new Cruce(row.getInteger("idCruce"), row.getString("ipCruce"), row.getString("nombreCruce"),
-									row.getLong("initialTimestamp"), row.getInteger("idUsuario"))));
-						}
-						
-						routingContext.response().setStatusCode(200).putHeader("content-type", "application/json").end(result.encodePrettily());						
-					}else {
-						routingContext.response().setStatusCode(401).putHeader("content-type", "application/json").end((JsonObject.mapFrom(res.cause()).encodePrettily()));
-						System.out.println("error");
-					}
-				});
-	}
+	
 
 }
