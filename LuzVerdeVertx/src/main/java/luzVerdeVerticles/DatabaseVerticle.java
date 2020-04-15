@@ -39,8 +39,11 @@ public class DatabaseVerticle extends AbstractVerticle{
 		
 		mySQLPool = MySQLPool.pool(vertx, mySQLConnectOptions, poolOptions);
 		
-		//HTTP Server
+		
 		Router router = Router.router(vertx);
+	
+		
+		//HTTP Server
 		vertx.createHttpServer().requestHandler(router::handle).listen(8082, result -> {
 			if(result.succeeded()) {
 				System.out.println("Todo OK. Sistema desplegado");
@@ -54,6 +57,7 @@ public class DatabaseVerticle extends AbstractVerticle{
 		//Peticiones
 			//Usuario
 		router.route("/api/usuarios").handler(BodyHandler.create());
+		router.route("/api/usuarios*").handler(BodyHandler.create());
 		
 		router.get("/api/usuarios/:idUsuario").handler(this::getUserByID);
 		router.get("/api/usuarios").handler(this::getAllUsers);
@@ -111,11 +115,11 @@ public class DatabaseVerticle extends AbstractVerticle{
 	private void postUser(RoutingContext routingContext) {
 		Usuario user = Json.decodeValue(routingContext.getBodyAsString(), Usuario.class);
 		mySQLPool.preparedQuery(
-				"INSERT INTO luzverde.usuario (idUsuario, nombre, apellidos, dni, fnacimiento) VALUES (?,?,?,?,?)",
-				Tuple.of(user.getIdUsuario(), user.getNombre(), user.getApellidos(), user.getApellidos(), user.getDni(), user.getFnacimiento()),
+				"INSERT INTO luzverde.usuario (nombre, apellidos, dni, fnacimiento) VALUES (?,?,?,?)",
+				Tuple.of(user.getNombre(), user.getApellidos(), user.getDni(), user.getFnacimiento()),
 				res -> {
 					if (res.succeeded()) {
-						System.out.println(res.result().rowCount()+"filas insertadas");
+						System.out.println(res.result().rowCount()+" filas insertadas");
 						
 						long id = res.result().property(MySQLClient.LAST_INSERTED_ID);
 						user.setIdUsuario((int) id);
@@ -133,11 +137,11 @@ public class DatabaseVerticle extends AbstractVerticle{
 	
 	private void updateUserByID(RoutingContext routingContext) {
 		JsonObject body = routingContext.getBodyAsJson();
-		
-		mySQLPool.query("UPDATE luzverde.usuario SET idUsuario = " + body.getInteger("idUsuario") + ", nombre = " + body.getString("nombre") + 
-				", apellidos = " + body.getString("apellidos") + ", dni = '" + body.getString("dni") + "', fnacimiento = '" + body.getInteger("fnacimiento")+" WHERE idUsuario = " + routingContext.request().getParam("idUsuario"),
+		mySQLPool.query("UPDATE luzverde.usuario SET nombre = '" + body.getString("nombre") + 
+				"', apellidos = '" + body.getString("apellidos") + "', dni = '" + body.getString("dni") + "', fnacimiento = " + body.getInteger("fnacimiento")+" WHERE idUsuario = " +routingContext.request().getParam("idUsuario"),
+	
 				res -> {
-			
+					
 			if(res.succeeded()) {
 				System.out.println("Usuario actualizado\n");
 				routingContext.response().setStatusCode(200).putHeader("content-type", "application/json").end(body.encodePrettily());

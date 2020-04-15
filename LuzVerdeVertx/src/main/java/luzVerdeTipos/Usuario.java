@@ -19,6 +19,14 @@ public class Usuario {
 		this.dni = dni;
 		this.fnacimiento = fnacimiento;
 	}
+	
+	public Usuario(String nombre, String apellidos, String dni, int fnacimiento) {
+		super();
+		this.nombre = nombre;
+		this.apellidos = apellidos;
+		this.dni = dni;
+		this.fnacimiento = fnacimiento;
+	}
 
 	public int getIdUsuario() {
 		return idUsuario;
