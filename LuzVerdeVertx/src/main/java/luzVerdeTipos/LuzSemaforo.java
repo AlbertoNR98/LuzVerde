@@ -17,6 +17,13 @@ public class LuzSemaforo {
 		this.timestamp = timestamp;
 		this.idSemaforo = idSemaforo;
 	}
+	
+	public LuzSemaforo(String color, long timestamp, int idSemaforo) {
+		super();
+		this.color = color;
+		this.timestamp = timestamp;
+		this.idSemaforo = idSemaforo;
+	}
 
 	public int getIdLuz_Semaforo() {
 		return idLuz_Semaforo;
