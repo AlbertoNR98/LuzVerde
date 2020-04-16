@@ -25,14 +25,14 @@ import io.vertx.sqlclient.RowSet;
 import io.vertx.sqlclient.Tuple;
 
 
-//Verticle para gestionar la BBDD a trav茅s de Vert.x
+//Verticle para gestionar la BBDD a trav閟 de Vert.x
 public class DatabaseVerticle extends AbstractVerticle{
 
 	private MySQLPool mySQLPool;
 	
 	@Override
 	public void start(Promise<Void> startPromise) {
-		//Conexi贸n BBDD
+		//Conexi髇 BBDD
 		MySQLConnectOptions mySQLConnectOptions = new MySQLConnectOptions().setPort(3306).setHost("localhost")
 				.setDatabase("luzverde").setUser("root").setPassword("zeus");
 		PoolOptions poolOptions = new PoolOptions().setMaxSize(15);
@@ -56,7 +56,6 @@ public class DatabaseVerticle extends AbstractVerticle{
 		
 		//Peticiones
 			//Usuario
-		
 		router.route("/api/usuarios").handler(BodyHandler.create());
 		router.route("/api/usuarios*").handler(BodyHandler.create());
 		
@@ -67,7 +66,6 @@ public class DatabaseVerticle extends AbstractVerticle{
 		router.delete("/api/usuarios/:idUsuario").handler(this::deleteUserByID);
 		
 			//Cruce
-		
 		router.route("/api/cruces").handler(BodyHandler.create());
 		router.route("/api/cruces*").handler(BodyHandler.create());
 		
@@ -77,8 +75,7 @@ public class DatabaseVerticle extends AbstractVerticle{
 		router.put("/api/cruces/:idCruce").handler(this::updateCruceByID);
 		router.delete("/api/cruces/:idCruce").handler(this::deleteCruceByID);
 		
-			//Sem谩foro
-		
+			//Sem醘oro
 		router.route("/api/semaforos").handler(BodyHandler.create());
 		router.route("/api/semaforos*").handler(BodyHandler.create());
 		
@@ -87,8 +84,7 @@ public class DatabaseVerticle extends AbstractVerticle{
 		router.post("/api/semaforos").handler(this::postSemaforo);
 		router.put("/api/semaforos/:idSemaforo").handler(this::updateNombreSemaforoByID);
 		
-			//Luz Sem谩foro
-		
+			//Luz Sem醘oro
 		router.route("/api/luces").handler(BodyHandler.create());
 		router.route("/api/luces*").handler(BodyHandler.create());
 		
@@ -96,28 +92,31 @@ public class DatabaseVerticle extends AbstractVerticle{
 		router.get("/api/luces").handler(this::getAllLuces);
 		router.put("/api/luces").handler(this::putLuz);
 		
-			//Sensor Contaminacion
+			//Sensores
+		router.route("api/sensores").handler(BodyHandler.create());
+		router.route("api/sensores*").handler(BodyHandler.create());
 		
-		router.get("/api/valor_sensor_contaminacion/values/:idSensor").handler(this::getValueBySensor);
-		router.post("/api/valor_sensor_contaminacion/values/").handler(this::postValorContaminacion);
-		router.put("/api/valor_sensor_contaminacion/values/:idSensor").handler(this::updateValorContaminacionByID);
-		router.delete("/api/valor_sensor_contaminacion/values/:idValor_sensor_contaminacion").handler(this::deleteValueById);
+		router.get("/api/sensores/:idSemaforo").handler(this::getSensorBySemaforo);
+		router.post("/api/sensores/").handler(this::postSensor);
+		router.put("/api/sensores/:idSemaforo").handler(this::updateSensorBySemaforo);
+		router.delete("/api/sensores/:idSemaforo").handler(this::deleteSensorBySemaforo);
+		
+			//Sensor Contaminaci髇
+		router.route("/api/valores_sensor_contaminacion").handler(BodyHandler.create());
+		router.route("/api/valores_sensor_contaminacion*").handler(BodyHandler.create());
+		
+		router.get("/api/valores_sensor_contaminacion/:idSensor").handler(this::getValueBySensor);
+		router.post("/api/valores_sensor_contaminacion/").handler(this::postValorContaminacion);
+		router.put("/api/valores_sensor_contaminacion/:idSensor").handler(this::updateValorContaminacionByID);
 		
 			//Sensor Temperatura y humedad
-		
-		router.get("/api/valor_sensor_temp_hum/values/:idSensor").handler(this::getValueBySensor2);
-		router.post("/api/valor_sensor_temp_hum/values/").handler(this::postValorTempHum);
-		router.put("/api/valor_sensor_temp_hum/values/:idSensor").handler(this::updateValorTempHumByID);
-		router.delete("/api/valor_sensor_temp_hum/values/:idValor_sensor_temp_hum").handler(this::deleteValueById2);
-			
-			//Sensores
-		
-		router.get("/api/sensor/sensors/:idSemaforo").handler(this::getSensorBySemaforo);
-		router.post("/api/sensor/sensors/").handler(this::postSensor);
-		router.put("/api/sensor/sensors/:idSemaforo").handler(this::updateSensorBySemaforo);
-		router.delete("/api/sensor/sensors/:idSemaforo").handler(this::deleteSensorBySemaforo);
-		
-		
+		router.route("/api/valores_sensor_temp_hum").handler(BodyHandler.create());
+		router.route("/api/valores_sensor_temp_hum*").handler(BodyHandler.create());
+
+		router.get("/api/valores_sensor_temp_hum/:idSensor").handler(this::getValueBySensor2);
+		router.post("/api/valores_sensor_temp_hum/").handler(this::postValorTempHum);
+		router.put("/api/valores_sensor_temp_hum/:idSensor").handler(this::updateValorTempHumByID);
+						
 	}
 	
 	//Operaciones
@@ -135,7 +134,7 @@ public class DatabaseVerticle extends AbstractVerticle{
 
 			}else {
 				routingContext.response().setStatusCode(401).putHeader("content-type", "application/json").end((JsonObject.mapFrom(res.cause()).encodePrettily()));
-				System.out.println("Error al hacer la operaci贸n");
+				System.out.println("Error al hacer la operaci髇");
 			}
 		});
 	}
@@ -152,7 +151,7 @@ public class DatabaseVerticle extends AbstractVerticle{
 				routingContext.response().setStatusCode(200).putHeader("content-type", "application/json").end(result.encodePrettily());						
 
 			}else {
-				System.out.println("Error al hacer la operaci贸n");
+				System.out.println("Error al hacer la operaci髇");
 				routingContext.response().setStatusCode(401).putHeader("content-type", "application/json").end((JsonObject.mapFrom(res.cause()).encodePrettily()));
 			}
 		});
@@ -173,7 +172,7 @@ public class DatabaseVerticle extends AbstractVerticle{
 						routingContext.response().setStatusCode(200).putHeader("content-type", "application/json")
 								.end(JsonObject.mapFrom(user).encodePrettily());
 					} else {
-						System.out.println("Error al hacer la operaci贸n");
+						System.out.println("Error al hacer la operaci髇");
 						System.out.println(res.cause().toString());
 						routingContext.response().setStatusCode(401).putHeader("content-type", "application/json")
 								.end((JsonObject.mapFrom(res.cause()).encodePrettily()));
@@ -190,7 +189,7 @@ public class DatabaseVerticle extends AbstractVerticle{
 						System.out.println("Usuario actualizado");
 						routingContext.response().setStatusCode(200).putHeader("content-type", "application/json").end(body.encodePrettily());
 					}else {
-						System.out.println("Error al hacer la operaci贸n");
+						System.out.println("Error al hacer la operaci髇");
 						routingContext.response().setStatusCode(401).putHeader("content-type", "application/json").end(JsonObject.mapFrom(res.cause()).encodePrettily());
 					}
 				});
@@ -203,7 +202,7 @@ public class DatabaseVerticle extends AbstractVerticle{
 						System.out.println("Usuario borrado");
 						routingContext.response().setStatusCode(200).putHeader("content-type", "application/json").end();
 					}else {
-						System.out.println("Error al hacer la operaci贸n");
+						System.out.println("Error al hacer la operaci髇");
 						routingContext.response().setStatusCode(401).putHeader("content-type", "application/json").end(JsonObject.mapFrom(res.cause()).encodePrettily());
 					}
 		});
@@ -215,7 +214,7 @@ public class DatabaseVerticle extends AbstractVerticle{
 				res -> {
 					if(res.succeeded()) {
 						RowSet<Row>  resultSet = res.result();
-						System.out.println("El n煤mero de elementos obtenidos es "+ resultSet.size());
+						System.out.println("El n鷐ero de elementos obtenidos es "+ resultSet.size());
 						JsonArray result = new JsonArray();
 						for (Row row : resultSet) {
 							result.add(JsonObject.mapFrom(new Cruce(row.getInteger("idCruce"), row.getString("ipCruce"), row.getString("nombreCruce"),
@@ -225,7 +224,7 @@ public class DatabaseVerticle extends AbstractVerticle{
 						routingContext.response().setStatusCode(200).putHeader("content-type", "application/json").end(result.encodePrettily());						
 					}else {
 						routingContext.response().setStatusCode(401).putHeader("content-type", "application/json").end((JsonObject.mapFrom(res.cause()).encodePrettily()));
-						System.out.println("Error al hacer la operaci贸n");
+						System.out.println("Error al hacer la operaci髇");
 					}
 				});
 	}
@@ -243,7 +242,7 @@ public class DatabaseVerticle extends AbstractVerticle{
 
 			}else {
 				routingContext.response().setStatusCode(401).putHeader("content-type", "application/json").end((JsonObject.mapFrom(res.cause()).encodePrettily()));
-				System.out.println("Error al hacer la operaci贸n");
+				System.out.println("Error al hacer la operaci髇");
 			}
 		});
 	}
@@ -263,7 +262,7 @@ public class DatabaseVerticle extends AbstractVerticle{
 						routingContext.response().setStatusCode(200).putHeader("content-type", "application/json")
 								.end(JsonObject.mapFrom(cruce).encodePrettily());
 					} else {
-						System.out.println("Error al hacer la operaci贸n");
+						System.out.println("Error al hacer la operaci髇");
 						System.out.println(res.cause().toString());
 						routingContext.response().setStatusCode(401).putHeader("content-type", "application/json")
 								.end((JsonObject.mapFrom(res.cause()).encodePrettily()));
@@ -280,7 +279,7 @@ public class DatabaseVerticle extends AbstractVerticle{
 						System.out.println("Cruce actualizado");
 						routingContext.response().setStatusCode(200).putHeader("content-type", "application/json").end(body.encodePrettily());
 					}else {
-						System.out.println("Error al hacer la operaci贸n");
+						System.out.println("Error al hacer la operaci髇");
 						routingContext.response().setStatusCode(401).putHeader("content-type", "application/json").end(JsonObject.mapFrom(res.cause()).encodePrettily());
 					}	
 		});
@@ -293,19 +292,19 @@ public class DatabaseVerticle extends AbstractVerticle{
 						System.out.println("Cruce borrado");
 						routingContext.response().setStatusCode(200).putHeader("content-type", "application/json").end();
 					}else {
-						System.out.println("Error al hacer la operaci贸n");
+						System.out.println("Error al hacer la operaci髇");
 						routingContext.response().setStatusCode(401).putHeader("content-type", "application/json").end(JsonObject.mapFrom(res.cause()).encodePrettily());
 					}
 		});
 	}
 	
-		//Sem谩foros
+		//Sem醘oros
 	private void getSemaforoByCruce (RoutingContext routingContext) {
 		mySQLPool.query("SELECT * FROM luzverde.semaforo WHERE idCruce = "+ routingContext.request().getParam("idCruce"), 
 				res -> {
 					if(res.succeeded()) {
 						RowSet<Row>  resultSet = res.result();
-						System.out.println("El n煤mero de elementos obtenidos es "+ resultSet.size());
+						System.out.println("El n鷐ero de elementos obtenidos es "+ resultSet.size());
 						JsonArray result = new JsonArray();
 						for (Row row : resultSet) {
 							result.add(JsonObject.mapFrom(new Semaforo(row.getInteger("idSemaforo"), row.getInteger("idCruce"), row.getString("nombreSemaforo"))));
@@ -313,7 +312,7 @@ public class DatabaseVerticle extends AbstractVerticle{
 						routingContext.response().setStatusCode(200).putHeader("content-type", "application/json").end(result.encodePrettily());						
 					}else {
 						routingContext.response().setStatusCode(401).putHeader("content-type", "application/json").end((JsonObject.mapFrom(res.cause()).encodePrettily()));
-						System.out.println("Error al hacer la operaci贸n");
+						System.out.println("Error al hacer la operaci髇");
 					}
 				});
 	}
@@ -331,7 +330,7 @@ public class DatabaseVerticle extends AbstractVerticle{
 
 			}else {
 				routingContext.response().setStatusCode(401).putHeader("content-type", "application/json").end((JsonObject.mapFrom(res.cause()).encodePrettily()));
-				System.out.println("Error al hacer la operaci贸n");
+				System.out.println("Error al hacer la operaci髇");
 			}
 		});
 	}
@@ -349,7 +348,7 @@ public class DatabaseVerticle extends AbstractVerticle{
 						routingContext.response().setStatusCode(200).putHeader("content-type", "application/json")
 								.end(JsonObject.mapFrom(sem).encodePrettily());
 					} else {
-						System.out.println("Error al hacer la operaci贸n");
+						System.out.println("Error al hacer la operaci髇");
 						System.out.println(res.cause().toString());
 						routingContext.response().setStatusCode(401).putHeader("content-type", "application/json")
 								.end((JsonObject.mapFrom(res.cause()).encodePrettily()));
@@ -363,23 +362,23 @@ public class DatabaseVerticle extends AbstractVerticle{
 				"' WHERE idSemaforo = " +routingContext.request().getParam("idSemaforo"),
 				res -> {		
 					if(res.succeeded()) {
-						System.out.println("Sem谩foro actualizado");
+						System.out.println("Sem醘oro actualizado");
 						routingContext.response().setStatusCode(200).putHeader("content-type", "application/json").end(body.encodePrettily());
 					}else {
-						System.out.println("Error al hacer la operaci贸n");
+						System.out.println("Error al hacer la operaci髇");
 						routingContext.response().setStatusCode(401).putHeader("content-type", "application/json").end(JsonObject.mapFrom(res.cause()).encodePrettily());
 					}	
 		});
 	}
 	
-		//Luz Sem谩foro
+		//Luz Sem醘oro
 	private void getLuzBySemaforoAndTimestamp (RoutingContext routingContext) {
 		mySQLPool.query("SELECT * FROM luzverde.luz_semaforo WHERE timestamp > "
 				+ routingContext.request().getParam("timestamp") + " AND idSemaforo = "
 				+ routingContext.request().getParam("idSemaforo"), res -> {
 					if (res.succeeded()) {
 						RowSet<Row> resultSet = res.result();
-						System.out.println("El n煤mero de elementos obtenidos es " + resultSet.size());
+						System.out.println("El n鷐ero de elementos obtenidos es " + resultSet.size());
 						JsonArray result = new JsonArray();
 						for (Row row : resultSet) {
 							result.add(JsonObject.mapFrom(new LuzSemaforo(row.getInteger("idLuz_Semaforo"),
@@ -408,7 +407,7 @@ public class DatabaseVerticle extends AbstractVerticle{
 
 			}else {
 				routingContext.response().setStatusCode(401).putHeader("content-type", "application/json").end((JsonObject.mapFrom(res.cause()).encodePrettily()));
-				System.out.println("Error al hacer la operaci贸n");
+				System.out.println("Error al hacer la operaci髇");
 			}
 		});
 	}
@@ -426,15 +425,91 @@ public class DatabaseVerticle extends AbstractVerticle{
 						routingContext.response().setStatusCode(200).putHeader("content-type", "application/json")
 								.end(JsonObject.mapFrom(luz).encodePrettily());
 					} else {
-						System.out.println("Error al hacer la operaci贸n");
+						System.out.println("Error al hacer la operaci髇");
 						System.out.println(res.cause().toString());
 						routingContext.response().setStatusCode(401).putHeader("content-type", "application/json")
 								.end((JsonObject.mapFrom(res.cause()).encodePrettily()));
 					}
 				});
 	}
-			//Sensores de Contaminacion
 	
+		//Sensores
+		private void getSensorBySemaforo (RoutingContext routingContext) {
+			mySQLPool.query("SELECT * FROM luzverde.sensor WHERE idSemaforo = "+ routingContext.request().getParam("idSemaforo"), 
+					res -> {
+						if(res.succeeded()) {
+							RowSet<Row>  resultSet = res.result();
+							System.out.println("El numero de elementos obtenidos es "+ resultSet.size());
+							JsonArray result = new JsonArray();
+							for (Row row : resultSet) {
+								result.add(JsonObject.mapFrom(new Sensor(row.getInteger("idSensor"), row.getString("tipoSensor"), row.getString("nombreSensor"), 
+										row.getInteger("idSemaforo"))));
+							}
+							
+							routingContext.response().setStatusCode(200).putHeader("content-type", "application/json").end(result.encodePrettily());						
+						}else {
+							routingContext.response().setStatusCode(401).putHeader("content-type", "application/json").end((JsonObject.mapFrom(res.cause()).encodePrettily()));
+							System.out.println("Error al hacer la operaci髇");
+						}
+					});
+		}
+		
+		private void postSensor(RoutingContext routingContext) {
+			Sensor sensor = Json.decodeValue(routingContext.getBodyAsString(), Sensor.class);
+			mySQLPool.preparedQuery(
+					"INSERT INTO luzverde.sensor (tipoSensor, nombreSensor, idSemaforo) VALUES (?,?,?)",
+					Tuple.of(sensor.getTipoSensor(), sensor.getNombreSensor(), sensor.getIdSemaforo()),
+					res -> {
+						if (res.succeeded()) {
+							System.out.println(res.result().rowCount()+" filas insertadas");
+							
+							long id = res.result().property(MySQLClient.LAST_INSERTED_ID);
+							sensor.setIdSensor((int) id);
+							
+							routingContext.response().setStatusCode(200).putHeader("content-type", "application/json")
+									.end(JsonObject.mapFrom(sensor).encodePrettily());
+						} else {
+							System.out.println("Error al hacer la operaci髇");
+							System.out.println(res.cause().toString());
+							routingContext.response().setStatusCode(401).putHeader("content-type", "application/json")
+									.end((JsonObject.mapFrom(res.cause()).encodePrettily()));
+						}
+					});
+		}
+		
+		private void updateSensorBySemaforo(RoutingContext routingContext) {
+			JsonObject body = routingContext.getBodyAsJson();
+			mySQLPool.query("UPDATE luzverde.sensor SET tipoSensor = '" + body.getString("tipoSensor") + 
+					"', nombreSensor = '" + body.getString("nombreSensor") + "', idSemaforo = '" + body.getInteger("idSemaforo") +" WHERE idSensor = " 
+					+routingContext.request().getParam("idSensor"),
+		
+					res -> {
+						
+				if(res.succeeded()) {
+					System.out.println("Sensor actualizado\n");
+					routingContext.response().setStatusCode(200).putHeader("content-type", "application/json").end(body.encodePrettily());
+				}else {
+					System.out.println("Error al hacer la operaci髇");
+					routingContext.response().setStatusCode(401).putHeader("content-type", "application/json").end(JsonObject.mapFrom(res.cause()).encodePrettily());
+				}
+				
+			});
+		}
+		
+		private void deleteSensorBySemaforo(RoutingContext routingContext) {
+			mySQLPool.query("DELETE FROM luzverde.sensor WHERE idSensor = "+routingContext.request().getParam(":idSensor"), 
+					res -> {
+						if(res.succeeded()) {
+							System.out.println("Sensor borrado\n");
+							routingContext.response().setStatusCode(200).putHeader("content-type", "application/json").end();
+						}else {
+							System.out.println("Error al hacer la operaci髇");
+							routingContext.response().setStatusCode(401).putHeader("content-type", "application/json").end(JsonObject.mapFrom(res.cause()).encodePrettily());
+						}
+			});
+		}
+		
+			//Sensores de Contaminaci髇
 	private void getValueBySensor (RoutingContext routingContext) {
 		mySQLPool.query("SELECT * FROM luzverde.valor_sensor_contaminacion WHERE idSensor = "+ routingContext.request().getParam("idSensor"), 
 				res -> {
@@ -450,7 +525,7 @@ public class DatabaseVerticle extends AbstractVerticle{
 						routingContext.response().setStatusCode(200).putHeader("content-type", "application/json").end(result.encodePrettily());						
 					}else {
 						routingContext.response().setStatusCode(401).putHeader("content-type", "application/json").end((JsonObject.mapFrom(res.cause()).encodePrettily()));
-						System.out.println("error");
+						System.out.println("Error al hacer la operaci髇");
 					}
 				});
 	}
@@ -470,7 +545,7 @@ public class DatabaseVerticle extends AbstractVerticle{
 						routingContext.response().setStatusCode(200).putHeader("content-type", "application/json")
 								.end(JsonObject.mapFrom(sensor).encodePrettily());
 					} else {
-						System.out.println("Error al hacer la operaci贸n\n");
+						System.out.println("Error al hacer la operaci髇");
 						System.out.println(res.cause().toString());
 						routingContext.response().setStatusCode(401).putHeader("content-type", "application/json")
 								.end((JsonObject.mapFrom(res.cause()).encodePrettily()));
@@ -490,28 +565,14 @@ public class DatabaseVerticle extends AbstractVerticle{
 				System.out.println("Valor Contaminacion actualizado\n");
 				routingContext.response().setStatusCode(200).putHeader("content-type", "application/json").end(body.encodePrettily());
 			}else {
-				System.out.println("Error al hacer la operaci贸n\n");
+				System.out.println("Error al hacer la operaci髇");
 				routingContext.response().setStatusCode(401).putHeader("content-type", "application/json").end(JsonObject.mapFrom(res.cause()).encodePrettily());
 			}
 			
 		});
 	}
-	
-	private void deleteValueById(RoutingContext routingContext) {
-		mySQLPool.query("DELETE FROM luzverde.valor_sensor_contaminacion WHERE idValor_sensor_contaminacion = "+routingContext.request().getParam(":idValor_sensor_contaminacion"), 
-				res -> {
-					if(res.succeeded()) {
-						System.out.println("Valor borrado\n");
-						routingContext.response().setStatusCode(200).putHeader("content-type", "application/json").end();
-					}else {
-						System.out.println("Error al hacer la operaci贸n\n");
-						routingContext.response().setStatusCode(401).putHeader("content-type", "application/json").end(JsonObject.mapFrom(res.cause()).encodePrettily());
-					}
-		});
-	}
-	
+		
 		//Sensores de temperatura y humedad
-	
 	private void getValueBySensor2 (RoutingContext routingContext) {
 		mySQLPool.query("SELECT * FROM luzverde.valor_sensor_temp_hum WHERE idSensor = "+ routingContext.request().getParam("idSensor"), 
 				res -> {
@@ -527,7 +588,7 @@ public class DatabaseVerticle extends AbstractVerticle{
 						routingContext.response().setStatusCode(200).putHeader("content-type", "application/json").end(result.encodePrettily());						
 					}else {
 						routingContext.response().setStatusCode(401).putHeader("content-type", "application/json").end((JsonObject.mapFrom(res.cause()).encodePrettily()));
-						System.out.println("error");
+						System.out.println("Error al hacer la operaci髇");
 					}
 				});
 	}
@@ -547,7 +608,7 @@ public class DatabaseVerticle extends AbstractVerticle{
 						routingContext.response().setStatusCode(200).putHeader("content-type", "application/json")
 								.end(JsonObject.mapFrom(sensor).encodePrettily());
 					} else {
-						System.out.println("Error al hacer la operaci贸n\n");
+						System.out.println("Error al hacer la operaci髇");
 						System.out.println(res.cause().toString());
 						routingContext.response().setStatusCode(401).putHeader("content-type", "application/json")
 								.end((JsonObject.mapFrom(res.cause()).encodePrettily()));
@@ -568,103 +629,11 @@ public class DatabaseVerticle extends AbstractVerticle{
 				System.out.println("Valor Temperatura/Humedad actualizado\n");
 				routingContext.response().setStatusCode(200).putHeader("content-type", "application/json").end(body.encodePrettily());
 			}else {
-				System.out.println("Error al hacer la operaci贸n\n");
+				System.out.println("Error al hacer la operaci髇");
 				routingContext.response().setStatusCode(401).putHeader("content-type", "application/json").end(JsonObject.mapFrom(res.cause()).encodePrettily());
 			}
 			
 		});
 	}
 	
-	private void deleteValueById2(RoutingContext routingContext) {
-		mySQLPool.query("DELETE FROM luzverde.valor_sensor_temp_hum WHERE idValor_sensor_contaminacion = "+routingContext.request().getParam(":idValor_sensor_contaminacion"), 
-				res -> {
-					if(res.succeeded()) {
-						System.out.println("Valor borrado\n");
-						routingContext.response().setStatusCode(200).putHeader("content-type", "application/json").end();
-					}else {
-						System.out.println("Error al hacer la operaci贸n\n");
-						routingContext.response().setStatusCode(401).putHeader("content-type", "application/json").end(JsonObject.mapFrom(res.cause()).encodePrettily());
-					}
-		});
-	}
-	
-		//Sensores
-	
-	private void getSensorBySemaforo (RoutingContext routingContext) {
-		mySQLPool.query("SELECT * FROM luzverde.sensor WHERE idSemaforo = "+ routingContext.request().getParam("idSemaforo"), 
-				res -> {
-					if(res.succeeded()) {
-						RowSet<Row>  resultSet = res.result();
-						System.out.println("El numero de elementos obtenidos es "+ resultSet.size());
-						JsonArray result = new JsonArray();
-						for (Row row : resultSet) {
-							result.add(JsonObject.mapFrom(new Sensor(row.getInteger("idSensor"), row.getString("tipoSensor"), row.getString("nombreSensor"), 
-									row.getInteger("idSemaforo"))));
-						}
-						
-						routingContext.response().setStatusCode(200).putHeader("content-type", "application/json").end(result.encodePrettily());						
-					}else {
-						routingContext.response().setStatusCode(401).putHeader("content-type", "application/json").end((JsonObject.mapFrom(res.cause()).encodePrettily()));
-						System.out.println("error");
-					}
-				});
-	}
-	
-	private void postSensor(RoutingContext routingContext) {
-		Sensor sensor = Json.decodeValue(routingContext.getBodyAsString(), Sensor.class);
-		mySQLPool.preparedQuery(
-				"INSERT INTO luzverde.sensor (tipoSensor, nombreSensor, idSemaforo) VALUES (?,?,?)",
-				Tuple.of(sensor.getTipoSensor(), sensor.getNombreSensor(), sensor.getIdSemaforo()),
-				res -> {
-					if (res.succeeded()) {
-						System.out.println(res.result().rowCount()+" filas insertadas");
-						
-						long id = res.result().property(MySQLClient.LAST_INSERTED_ID);
-						sensor.setIdSensor((int) id);
-						
-						routingContext.response().setStatusCode(200).putHeader("content-type", "application/json")
-								.end(JsonObject.mapFrom(sensor).encodePrettily());
-					} else {
-						System.out.println("Error al hacer la operaci贸n\n");
-						System.out.println(res.cause().toString());
-						routingContext.response().setStatusCode(401).putHeader("content-type", "application/json")
-								.end((JsonObject.mapFrom(res.cause()).encodePrettily()));
-					}
-				});
-	}
-	
-	private void updateSensorBySemaforo(RoutingContext routingContext) {
-		JsonObject body = routingContext.getBodyAsJson();
-		mySQLPool.query("UPDATE luzverde.sensor SET tipoSensor = '" + body.getString("tipoSensor") + 
-				"', nombreSensor = '" + body.getString("nombreSensor") + "', idSemaforo = '" + body.getInteger("idSemaforo") +" WHERE idSensor = " 
-				+routingContext.request().getParam("idSensor"),
-	
-				res -> {
-					
-			if(res.succeeded()) {
-				System.out.println("Sensor actualizado\n");
-				routingContext.response().setStatusCode(200).putHeader("content-type", "application/json").end(body.encodePrettily());
-			}else {
-				System.out.println("Error al hacer la operaci贸n\n");
-				routingContext.response().setStatusCode(401).putHeader("content-type", "application/json").end(JsonObject.mapFrom(res.cause()).encodePrettily());
-			}
-			
-		});
-	}
-	
-	private void deleteSensorBySemaforo(RoutingContext routingContext) {
-		mySQLPool.query("DELETE FROM luzverde.sensor WHERE idSensor = "+routingContext.request().getParam(":idSensor"), 
-				res -> {
-					if(res.succeeded()) {
-						System.out.println("Sensor borrado\n");
-						routingContext.response().setStatusCode(200).putHeader("content-type", "application/json").end();
-					}else {
-						System.out.println("Error al hacer la operaci贸n\n");
-						routingContext.response().setStatusCode(401).putHeader("content-type", "application/json").end(JsonObject.mapFrom(res.cause()).encodePrettily());
-					}
-		});
-	}
-	
-	
-
 }
