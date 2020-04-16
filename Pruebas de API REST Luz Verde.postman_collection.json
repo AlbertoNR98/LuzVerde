@@ -1,0 +1,165 @@
+{
+	"info": {
+		"_postman_id": "4cfe2c03-3d61-448d-9dcf-fefe158316c2",
+		"name": "Pruebas de API REST Luz Verde",
+		"description": "Script con todas las peticiones que se harán para probar la API REST del proyecto Luz Verde",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "getUserByID",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": ""
+				},
+				"description": "Obtiene el usuario dado su identificador"
+			},
+			"response": []
+		},
+		{
+			"name": "getAllUsers",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": ""
+				},
+				"description": "Obtiene todos los usuarios"
+			},
+			"response": []
+		},
+		{
+			"name": "getCruceByUsuario",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": ""
+				},
+				"description": "Obtiene los cruces controlados por el usuario introducido"
+			},
+			"response": []
+		},
+		{
+			"name": "getAllCruces",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": ""
+				},
+				"description": "Obtiene todos los cruces"
+			},
+			"response": []
+		},
+		{
+			"name": "getSemaforoByCruce",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": ""
+				},
+				"description": "Obtiene los semáforos del cruce"
+			},
+			"response": []
+		},
+		{
+			"name": "getAllSemaforos",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": ""
+				},
+				"description": "Obtiene todos los semáforos"
+			},
+			"response": []
+		},
+		{
+			"name": "getLuzBySemaforoAndTimestamp",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": ""
+				},
+				"description": "Devuelve la luz de un semáforo dado cuando supera un timestamp pasado como parámetro"
+			},
+			"response": []
+		},
+		{
+			"name": "getAllLuces",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": ""
+				},
+				"description": "Devuelve el historial de luces de los semáforos"
+			},
+			"response": []
+		},
+		{
+			"name": "getSensorBySemaforo",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": ""
+				},
+				"description": "Obtiene los sensores del semáforo"
+			},
+			"response": []
+		},
+		{
+			"name": "getValueBySensor",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": ""
+				},
+				"description": "Obtiene los valores de un sensor de contaminación determinado"
+			},
+			"response": []
+		},
+		{
+			"name": "getValueBySensor2",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": ""
+				},
+				"description": "Obtiene los valores de un sensor de temperatura determinado"
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"id": "478abc57-6d85-42f7-a3fd-f891f1f75748",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"id": "4ce33b3d-085f-4234-8759-30244eb0d666",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"protocolProfileBehavior": {}
+}
