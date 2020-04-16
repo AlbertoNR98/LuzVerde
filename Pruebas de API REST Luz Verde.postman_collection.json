@@ -12,7 +12,16 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": ""
+					"raw": "localhost:8082/api/usuarios/1",
+					"host": [
+						"localhost"
+					],
+					"port": "8082",
+					"path": [
+						"api",
+						"usuarios",
+						"1"
+					]
 				},
 				"description": "Obtiene el usuario dado su identificador"
 			},
@@ -24,7 +33,15 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": ""
+					"raw": "localhost:8082/api/usuarios",
+					"host": [
+						"localhost"
+					],
+					"port": "8082",
+					"path": [
+						"api",
+						"usuarios"
+					]
 				},
 				"description": "Obtiene todos los usuarios"
 			},
@@ -36,7 +53,16 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": ""
+					"raw": "localhost:8082/api/cruces/1",
+					"host": [
+						"localhost"
+					],
+					"port": "8082",
+					"path": [
+						"api",
+						"cruces",
+						"1"
+					]
 				},
 				"description": "Obtiene los cruces controlados por el usuario introducido"
 			},
@@ -48,7 +74,15 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": ""
+					"raw": "localhost:8082/api/cruces",
+					"host": [
+						"localhost"
+					],
+					"port": "8082",
+					"path": [
+						"api",
+						"cruces"
+					]
 				},
 				"description": "Obtiene todos los cruces"
 			},
@@ -60,7 +94,16 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": ""
+					"raw": "localhost:8082/api/semaforos/1",
+					"host": [
+						"localhost"
+					],
+					"port": "8082",
+					"path": [
+						"api",
+						"semaforos",
+						"1"
+					]
 				},
 				"description": "Obtiene los semáforos del cruce"
 			},
@@ -72,7 +115,15 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": ""
+					"raw": "localhost:8082/api/semaforos",
+					"host": [
+						"localhost"
+					],
+					"port": "8082",
+					"path": [
+						"api",
+						"semaforos"
+					]
 				},
 				"description": "Obtiene todos los semáforos"
 			},
@@ -84,7 +135,17 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": ""
+					"raw": "localhost:8082/api/luces/1/99",
+					"host": [
+						"localhost"
+					],
+					"port": "8082",
+					"path": [
+						"api",
+						"luces",
+						"1",
+						"99"
+					]
 				},
 				"description": "Devuelve la luz de un semáforo dado cuando supera un timestamp pasado como parámetro"
 			},
@@ -96,7 +157,15 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": ""
+					"raw": "localhost:8082/api/luces",
+					"host": [
+						"localhost"
+					],
+					"port": "8082",
+					"path": [
+						"api",
+						"luces"
+					]
 				},
 				"description": "Devuelve el historial de luces de los semáforos"
 			},
@@ -108,7 +177,16 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": ""
+					"raw": "localhost:8082/api/sensores/1",
+					"host": [
+						"localhost"
+					],
+					"port": "8082",
+					"path": [
+						"api",
+						"sensores",
+						"1"
+					]
 				},
 				"description": "Obtiene los sensores del semáforo"
 			},
@@ -120,7 +198,16 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": ""
+					"raw": "localhost:8082/api/valores_sensor_contaminacion/3",
+					"host": [
+						"localhost"
+					],
+					"port": "8082",
+					"path": [
+						"api",
+						"valores_sensor_contaminacion",
+						"3"
+					]
 				},
 				"description": "Obtiene los valores de un sensor de contaminación determinado"
 			},
@@ -132,7 +219,16 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": ""
+					"raw": "localhost:8082/api/valores_sensor_temp_hum/1",
+					"host": [
+						"localhost"
+					],
+					"port": "8082",
+					"path": [
+						"api",
+						"valores_sensor_temp_hum",
+						"1"
+					]
 				},
 				"description": "Obtiene los valores de un sensor de temperatura determinado"
 			},
