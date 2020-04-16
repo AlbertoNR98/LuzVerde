@@ -97,7 +97,7 @@ public class DatabaseVerticle extends AbstractVerticle{
 		router.route("/api/sensores*").handler(BodyHandler.create());
 		
 		router.get("/api/sensores/:idSemaforo").handler(this::getSensorBySemaforo);
-		router.post("/api/sensores/").handler(this::postSensor);
+		router.post("/api/sensores").handler(this::postSensor);
 		router.put("/api/sensores/:idSemaforo").handler(this::updateSensorBySemaforo);
 		router.delete("/api/sensores/:idSemaforo").handler(this::deleteSensorBySemaforo);
 		
@@ -106,14 +106,14 @@ public class DatabaseVerticle extends AbstractVerticle{
 		router.route("/api/valores_sensor_contaminacion*").handler(BodyHandler.create());
 		
 		router.get("/api/valores_sensor_contaminacion/:idSensor").handler(this::getValueBySensorCont);
-		router.put("/api/valores_sensor_contaminacion/").handler(this::putValorContaminacion);
+		router.put("/api/valores_sensor_contaminacion").handler(this::putValorContaminacion);
 		
 			//Sensor Temperatura y humedad
 		router.route("/api/valores_sensor_temp_hum").handler(BodyHandler.create());
 		router.route("/api/valores_sensor_temp_hum*").handler(BodyHandler.create());
 
 		router.get("/api/valores_sensor_temp_hum/:idSensor").handler(this::getValueBySensorTempHum);
-		router.put("/api/valores_sensor_temp_hum/").handler(this::putValorTempHum);
+		router.put("/api/valores_sensor_temp_hum").handler(this::putValorTempHum);
 						
 	}
 	
@@ -478,7 +478,7 @@ public class DatabaseVerticle extends AbstractVerticle{
 		private void updateSensorBySemaforo(RoutingContext routingContext) {
 			JsonObject body = routingContext.getBodyAsJson();
 			mySQLPool.query("UPDATE luzverde.sensor SET tipoSensor = '" + body.getString("tipoSensor") + 
-					"', nombreSensor = '" + body.getString("nombreSensor") + "', idSemaforo = '" + body.getInteger("idSemaforo") +" WHERE idSensor = " 
+					"', nombreSensor = '" + body.getString("nombreSensor") + "', idSemaforo = " + body.getInteger("idSemaforo") +" WHERE idSensor = " 
 					+routingContext.request().getParam("idSensor"),
 		
 					res -> {
