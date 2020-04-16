@@ -239,6 +239,15 @@
 			"request": {
 				"method": "POST",
 				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"nombre\" : \"usuario\",\n\t\"apellidos\" : \"nuevo\",\n\t\"dni\" : \"122222Z\",\n\t\"fnacimiento\" : 101095\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
 				"url": {
 					"raw": "localhost:8082/api/usuarios",
 					"host": [
@@ -259,6 +268,15 @@
 			"request": {
 				"method": "POST",
 				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"idCruce\": 100,\n\t\"ipCruce\": \"212.212.212.212\",\n\t\"nombreCruce\": \"Avda. Palmera - Cardenal Ilundain\",\n\t\"initialTimestamp\": 10000,\n\t\"idUsuario\": 1\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
 				"url": {
 					"raw": "localhost:8082/api/cruces",
 					"host": [
@@ -279,6 +297,15 @@
 			"request": {
 				"method": "POST",
 				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"idCruce\" : 1,\n\t\"nombreSemaforo\" : \"AVPCI1\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
 				"url": {
 					"raw": "localhost:8082/api/semaforos",
 					"host": [
@@ -299,6 +326,15 @@
 			"request": {
 				"method": "POST",
 				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"tipoSensor\" : \"CO2\",\n\t\"nombreSensor\" : \"ContAire5\",\n\t\"idSemaforo\" : 5\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
 				"url": {
 					"raw": "localhost:8082/api/sensores",
 					"host": [
@@ -319,8 +355,17 @@
 			"request": {
 				"method": "PUT",
 				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"nombre\" : \"JJ\",\n\t\"apellidos\" : \"Comitre\",\n\t\"dni\" : \"987226541F\",\n\t\"fnacimiento\": 181099\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
 				"url": {
-					"raw": "localhost:8082/api/usuarios/1",
+					"raw": "localhost:8082/api/usuarios/2",
 					"host": [
 						"localhost"
 					],
@@ -328,7 +373,7 @@
 					"path": [
 						"api",
 						"usuarios",
-						"1"
+						"2"
 					]
 				},
 				"description": "Actualiza la información del usuario dado"
@@ -340,6 +385,15 @@
 			"request": {
 				"method": "PUT",
 				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"ipCruce\" : \"120.120.100.130\",\n  \"nombreCruce\" : \"Avda. Palmera - Luca de Tena\",\n  \"initialTimestamp\" : 111111111,\n  \"idUsuario\" : 1\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
 				"url": {
 					"raw": "localhost:8082/api/cruces/1",
 					"host": [
@@ -361,6 +415,15 @@
 			"request": {
 				"method": "PUT",
 				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"nombreSemaforo\":\"Semaforo1\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
 				"url": {
 					"raw": "localhost:8082/api/semaforos/1",
 					"host": [
@@ -382,6 +445,15 @@
 			"request": {
 				"method": "PUT",
 				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"color\" : \"Verde\",\r\n  \"timestamp\" : 120000,\r\n  \"idSemaforo\" : 3\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
 				"url": {
 					"raw": "localhost:8082/api/luces",
 					"host": [
@@ -402,6 +474,15 @@
 			"request": {
 				"method": "PUT",
 				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"tipoSensor\" : \"TempHum\",\r\n  \"nombreSensor\" : \"NuevoTempHum1\",\r\n  \"idSemaforo\" : 1\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
 				"url": {
 					"raw": "localhost:8082/api/sensores/1",
 					"host": [
@@ -423,6 +504,15 @@
 			"request": {
 				"method": "PUT",
 				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"value\" : 1.9,\r\n  \"accuracy\" : 1.0,\r\n  \"timestamp\" : 999999999,\r\n  \"idSensor\" : 3\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
 				"url": {
 					"raw": "localhost:8082/api/valores_sensor_contaminacion",
 					"host": [
@@ -443,6 +533,15 @@
 			"request": {
 				"method": "PUT",
 				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"valueTemp\" : 40.0,\r\n  \"accuracyTemp\" : 1.0,\r\n  \"valueHum\" : 80.0,\r\n  \"accuracyHum\" : 1.0,\r\n  \"timestamp\" : 999999999,\r\n  \"idSensor\" : 1\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
 				"url": {
 					"raw": "localhost:8082/api/valores_sensor_temp_hum",
 					"host": [
