@@ -93,8 +93,8 @@ public class DatabaseVerticle extends AbstractVerticle{
 		router.put("/api/luces").handler(this::putLuz);
 		
 			//Sensores
-		router.route("api/sensores").handler(BodyHandler.create());
-		router.route("api/sensores*").handler(BodyHandler.create());
+		router.route("/api/sensores").handler(BodyHandler.create());
+		router.route("/api/sensores*").handler(BodyHandler.create());
 		
 		router.get("/api/sensores/:idSemaforo").handler(this::getSensorBySemaforo);
 		router.post("/api/sensores/").handler(this::postSensor);
@@ -105,17 +105,15 @@ public class DatabaseVerticle extends AbstractVerticle{
 		router.route("/api/valores_sensor_contaminacion").handler(BodyHandler.create());
 		router.route("/api/valores_sensor_contaminacion*").handler(BodyHandler.create());
 		
-		router.get("/api/valores_sensor_contaminacion/:idSensor").handler(this::getValueBySensor);
-		router.post("/api/valores_sensor_contaminacion/").handler(this::postValorContaminacion);
-		router.put("/api/valores_sensor_contaminacion/:idSensor").handler(this::updateValorContaminacionByID);
+		router.get("/api/valores_sensor_contaminacion/:idSensor").handler(this::getValueBySensorCont);
+		router.put("/api/valores_sensor_contaminacion/").handler(this::putValorContaminacion);
 		
 			//Sensor Temperatura y humedad
 		router.route("/api/valores_sensor_temp_hum").handler(BodyHandler.create());
 		router.route("/api/valores_sensor_temp_hum*").handler(BodyHandler.create());
 
-		router.get("/api/valores_sensor_temp_hum/:idSensor").handler(this::getValueBySensor2);
-		router.post("/api/valores_sensor_temp_hum/").handler(this::postValorTempHum);
-		router.put("/api/valores_sensor_temp_hum/:idSensor").handler(this::updateValorTempHumByID);
+		router.get("/api/valores_sensor_temp_hum/:idSensor").handler(this::getValueBySensorTempHum);
+		router.put("/api/valores_sensor_temp_hum/").handler(this::putValorTempHum);
 						
 	}
 	
@@ -510,7 +508,7 @@ public class DatabaseVerticle extends AbstractVerticle{
 		}
 		
 			//Sensores de Contaminación
-	private void getValueBySensor (RoutingContext routingContext) {
+	private void getValueBySensorCont (RoutingContext routingContext) {
 		mySQLPool.query("SELECT * FROM luzverde.valor_sensor_contaminacion WHERE idSensor = "+ routingContext.request().getParam("idSensor"), 
 				res -> {
 					if(res.succeeded()) {
@@ -530,7 +528,7 @@ public class DatabaseVerticle extends AbstractVerticle{
 				});
 	}
 	 
-	private void postValorContaminacion(RoutingContext routingContext) {
+	private void putValorContaminacion(RoutingContext routingContext) {
 		ValorSensorContaminacion sensor = Json.decodeValue(routingContext.getBodyAsString(), ValorSensorContaminacion.class);
 		mySQLPool.preparedQuery(
 				"INSERT INTO luzverde.valor_sensor_contaminacion (value, accuracy, timestamp, idSensor) VALUES (?,?,?,?)",
@@ -552,28 +550,9 @@ public class DatabaseVerticle extends AbstractVerticle{
 					}
 				});
 	}
-	
-	private void updateValorContaminacionByID(RoutingContext routingContext) {
-		JsonObject body = routingContext.getBodyAsJson();
-		mySQLPool.query("UPDATE luzverde.valor_sensor_contaminacion SET value = '" + body.getFloat("value") + 
-				"', accuracy = '" + body.getFloat("accuracy") + "', timestamp = '" + body.getLong("timestamp") + "', idSensor = " + body.getInteger("idSensor")+" WHERE idValor_sensor_contaminacion = " 
-				+routingContext.request().getParam("idValor_sensor_contaminacion"),
-	
-				res -> {
-					
-			if(res.succeeded()) {
-				System.out.println("Valor Contaminacion actualizado\n");
-				routingContext.response().setStatusCode(200).putHeader("content-type", "application/json").end(body.encodePrettily());
-			}else {
-				System.out.println("Error al hacer la operación");
-				routingContext.response().setStatusCode(401).putHeader("content-type", "application/json").end(JsonObject.mapFrom(res.cause()).encodePrettily());
-			}
-			
-		});
-	}
-		
+
 		//Sensores de temperatura y humedad
-	private void getValueBySensor2 (RoutingContext routingContext) {
+	private void getValueBySensorTempHum (RoutingContext routingContext) {
 		mySQLPool.query("SELECT * FROM luzverde.valor_sensor_temp_hum WHERE idSensor = "+ routingContext.request().getParam("idSensor"), 
 				res -> {
 					if(res.succeeded()) {
@@ -593,7 +572,7 @@ public class DatabaseVerticle extends AbstractVerticle{
 				});
 	}
 	
-	private void postValorTempHum(RoutingContext routingContext) {
+	private void putValorTempHum(RoutingContext routingContext) {
 		ValorSensorTempHum sensor = Json.decodeValue(routingContext.getBodyAsString(), ValorSensorTempHum.class);
 		mySQLPool.preparedQuery(
 				"INSERT INTO luzverde.valor_sensor_temp_hum (value, accuracy, timestamp, idSensor) VALUES (?,?,?,?)",
@@ -615,25 +594,4 @@ public class DatabaseVerticle extends AbstractVerticle{
 					}
 				});
 	}
-	
-	private void updateValorTempHumByID(RoutingContext routingContext) {
-		JsonObject body = routingContext.getBodyAsJson();
-		mySQLPool.query("UPDATE luzverde.valor_sensor_temp_hum SET valueTemp = '" + body.getFloat("valueTemp") + 
-				"', accuracyTemp = '" + body.getFloat("accuracyTemp") + "valueHum = '" + body.getFloat("valueHum") + 
-						"', accuracyHum = '" + body.getFloat("accuracyHum") + "', timestamp = '" + body.getLong("timestamp") + "', idSensor = " + body.getInteger("idSensor")+" WHERE idValor_sensor_temp_hum = " 
-				+routingContext.request().getParam("idValor_sensor_temp_hum"),
-	
-				res -> {
-					
-			if(res.succeeded()) {
-				System.out.println("Valor Temperatura/Humedad actualizado\n");
-				routingContext.response().setStatusCode(200).putHeader("content-type", "application/json").end(body.encodePrettily());
-			}else {
-				System.out.println("Error al hacer la operación");
-				routingContext.response().setStatusCode(401).putHeader("content-type", "application/json").end(JsonObject.mapFrom(res.cause()).encodePrettily());
-			}
-			
-		});
-	}
-	
 }
