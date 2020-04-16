@@ -137,6 +137,293 @@
 				"description": "Obtiene los valores de un sensor de temperatura determinado"
 			},
 			"response": []
+		},
+		{
+			"name": "postUser",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "localhost:8082/api/usuarios",
+					"host": [
+						"localhost"
+					],
+					"port": "8082",
+					"path": [
+						"api",
+						"usuarios"
+					]
+				},
+				"description": "Inserta un usuario"
+			},
+			"response": []
+		},
+		{
+			"name": "postCruce",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "localhost:8082/api/cruces",
+					"host": [
+						"localhost"
+					],
+					"port": "8082",
+					"path": [
+						"api",
+						"cruces"
+					]
+				},
+				"description": "Insertar un cruce"
+			},
+			"response": []
+		},
+		{
+			"name": "postSemaforo",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "localhost:8082/api/semaforos",
+					"host": [
+						"localhost"
+					],
+					"port": "8082",
+					"path": [
+						"api",
+						"semaforos"
+					]
+				},
+				"description": "Inserta un semáforo"
+			},
+			"response": []
+		},
+		{
+			"name": "postSensor",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "localhost:8082/api/sensores",
+					"host": [
+						"localhost"
+					],
+					"port": "8082",
+					"path": [
+						"api",
+						"sensores"
+					]
+				},
+				"description": "Inserta un sensor"
+			},
+			"response": []
+		},
+		{
+			"name": "updateUserByID",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"url": {
+					"raw": "localhost:8082/api/usuarios/1",
+					"host": [
+						"localhost"
+					],
+					"port": "8082",
+					"path": [
+						"api",
+						"usuarios",
+						"1"
+					]
+				},
+				"description": "Actualiza la información del usuario dado"
+			},
+			"response": []
+		},
+		{
+			"name": "updateCruceByID",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"url": {
+					"raw": "localhost:8082/api/cruces/1",
+					"host": [
+						"localhost"
+					],
+					"port": "8082",
+					"path": [
+						"api",
+						"cruces",
+						"1"
+					]
+				},
+				"description": "Actualiza el cruce dado mediante su ID"
+			},
+			"response": []
+		},
+		{
+			"name": "updateNombreSemaforoByID",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"url": {
+					"raw": "localhost:8082/api/semaforos/1",
+					"host": [
+						"localhost"
+					],
+					"port": "8082",
+					"path": [
+						"api",
+						"semaforos",
+						"1"
+					]
+				},
+				"description": "Cambia el nombre del semáforo"
+			},
+			"response": []
+		},
+		{
+			"name": "putLuz",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"url": {
+					"raw": "localhost:8082/api/luces",
+					"host": [
+						"localhost"
+					],
+					"port": "8082",
+					"path": [
+						"api",
+						"luces"
+					]
+				},
+				"description": "Guarda el estado del semáforo en cada momento"
+			},
+			"response": []
+		},
+		{
+			"name": "updateSensorBySemaforo",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"url": {
+					"raw": "localhost:8082/api/sensores/1",
+					"host": [
+						"localhost"
+					],
+					"port": "8082",
+					"path": [
+						"api",
+						"sensores",
+						"1"
+					]
+				},
+				"description": "Actualiza el sensor de un determinado semáforo"
+			},
+			"response": []
+		},
+		{
+			"name": "putValorContaminacion",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"url": {
+					"raw": "localhost:8082/api/valores_sensor_contaminacion",
+					"host": [
+						"localhost"
+					],
+					"port": "8082",
+					"path": [
+						"api",
+						"valores_sensor_contaminacion"
+					]
+				},
+				"description": "Pone un valor del sensor de contaminación"
+			},
+			"response": []
+		},
+		{
+			"name": "putValorTempHum",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"url": {
+					"raw": "localhost:8082/api/valores_sensor_temp_hum",
+					"host": [
+						"localhost"
+					],
+					"port": "8082",
+					"path": [
+						"api",
+						"valores_sensor_temp_hum"
+					]
+				},
+				"description": "Pone un valor del sensor de temperatura"
+			},
+			"response": []
+		},
+		{
+			"name": "deleteUserByID",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "localhost:8082/api/usuarios/1",
+					"host": [
+						"localhost"
+					],
+					"port": "8082",
+					"path": [
+						"api",
+						"usuarios",
+						"1"
+					]
+				},
+				"description": "Borra el usuario"
+			},
+			"response": []
+		},
+		{
+			"name": "deleteCruceByID",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "localhost:8082/api/cruces/1",
+					"host": [
+						"localhost"
+					],
+					"port": "8082",
+					"path": [
+						"api",
+						"cruces",
+						"1"
+					]
+				},
+				"description": "Borra el cruce"
+			},
+			"response": []
+		},
+		{
+			"name": "deleteSensorBySemaforo",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "localhost:8082/api/sensores/1",
+					"host": [
+						"localhost"
+					],
+					"port": "8082",
+					"path": [
+						"api",
+						"sensores",
+						"1"
+					]
+				},
+				"description": "Borra los sensores de un semáforo concreto"
+			},
+			"response": []
 		}
 	],
 	"event": [
