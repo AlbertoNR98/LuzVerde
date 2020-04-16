@@ -575,7 +575,7 @@ public class DatabaseVerticle extends AbstractVerticle{
 	private void putValorTempHum(RoutingContext routingContext) {
 		ValorSensorTempHum sensor = Json.decodeValue(routingContext.getBodyAsString(), ValorSensorTempHum.class);
 		mySQLPool.preparedQuery(
-				"INSERT INTO luzverde.valor_sensor_temp_hum (value, accuracy, timestamp, idSensor) VALUES (?,?,?,?)",
+				"INSERT INTO luzverde.valor_sensor_temp_hum (valueTemp, accuracyTemp, valueHum, accuracyHum, timestamp, idSensor) VALUES (?,?,?,?,?,?)",
 				Tuple.of(sensor.getValueTemp(),sensor.getAccuracyTemp(),sensor.getValueHum(),sensor.getAccuracyHum(),sensor.getTimestamp(),sensor.getIdSensor()),
 				res -> {
 					if (res.succeeded()) {
