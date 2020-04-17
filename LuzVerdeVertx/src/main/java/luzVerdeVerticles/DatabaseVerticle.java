@@ -98,8 +98,8 @@ public class DatabaseVerticle extends AbstractVerticle{
 		
 		router.get("/api/sensores/:idSemaforo").handler(this::getSensorBySemaforo);
 		router.post("/api/sensores").handler(this::postSensor);
-		router.put("/api/sensores/:idSemaforo").handler(this::updateSensorBySemaforo);
-		router.delete("/api/sensores/:idSemaforo").handler(this::deleteSensorBySemaforo);
+		router.put("/api/sensores/:idSensor").handler(this::updateSensorByID);
+		router.delete("/api/sensores/:idSensor").handler(this::deleteSensorByID);
 		
 			//Sensor Contaminación
 		router.route("/api/valores_sensor_contaminacion").handler(BodyHandler.create());
@@ -475,7 +475,7 @@ public class DatabaseVerticle extends AbstractVerticle{
 					});
 		}
 		
-		private void updateSensorBySemaforo(RoutingContext routingContext) {
+		private void updateSensorByID(RoutingContext routingContext) {
 			JsonObject body = routingContext.getBodyAsJson();
 			mySQLPool.query("UPDATE luzverde.sensor SET tipoSensor = '" + body.getString("tipoSensor") + 
 					"', nombreSensor = '" + body.getString("nombreSensor") + "', idSemaforo = " + body.getInteger("idSemaforo") +" WHERE idSensor = " 
@@ -494,11 +494,11 @@ public class DatabaseVerticle extends AbstractVerticle{
 			});
 		}
 		
-		private void deleteSensorBySemaforo(RoutingContext routingContext) {
-			mySQLPool.query("DELETE FROM luzverde.sensor WHERE idSensor = "+routingContext.request().getParam(":idSensor"), 
+		private void deleteSensorByID(RoutingContext routingContext) {
+			mySQLPool.query("DELETE FROM luzverde.sensor WHERE idSensor = "+routingContext.request().getParam("idSensor"), 
 					res -> {
 						if(res.succeeded()) {
-							System.out.println("Sensor borrado\n");
+							System.out.println("Usuario borrado");
 							routingContext.response().setStatusCode(200).putHeader("content-type", "application/json").end();
 						}else {
 							System.out.println("Error al hacer la operación");
