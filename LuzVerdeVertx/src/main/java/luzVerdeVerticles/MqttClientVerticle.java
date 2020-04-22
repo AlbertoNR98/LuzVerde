@@ -1,12 +1,18 @@
 package luzVerdeVerticles;
 
+import java.util.Calendar;
+import java.util.Random;
+
 import io.netty.handler.codec.mqtt.MqttConnectReturnCode;
 import io.netty.handler.codec.mqtt.MqttQoS;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Promise;
+import io.vertx.core.buffer.Buffer;
+import io.vertx.core.json.Json;
 import io.vertx.mqtt.MqttClient;
 import io.vertx.mqtt.MqttClientOptions;
 import io.vertx.mqtt.impl.MqttClientImpl;
+import luzVerdeTipos.ValorSensorContaminacion;
 
 public class MqttClientVerticle extends AbstractVerticle{
 	
@@ -43,7 +49,7 @@ public class MqttClientVerticle extends AbstractVerticle{
 							mqttClient.publish(MqttServerVerticle.TOPIC_DOMO, Buffer.buffer(Json.encodePrettily(sensorValue)) , MqttQoS.AT_LEAST_ONCE, false, true);
 						});
 					}else {
-						System.out.println(classInstanceId + "NOT suscribed to" + MqttServerVerticle);
+						System.out.println(classInstanceId + "NOT suscribed to" + MqttServerVerticle.TOPIC_DOMO);
 					}
 				});
 			}else {
