@@ -21,9 +21,9 @@ import io.vertx.mqtt.MqttTopicSubscription;
 
 public class MqttServerVerticle extends AbstractVerticle{
 	
-	public static final String TOPIC_LIGHTS = "lights";
-	public static final String TOPIC_INFO = "info";
-	public static final String TOPIC_DOMO = "domo";
+	public static final String TOPIC_CONT = "contaminacion";
+	public static final String TOPIC_TEMP_HUM = "temp_hum";
+	public static final String TOPIC_LUZ = "luces";
 	
 	private static final SetMultimap<String ,MqttEndpoint> clients = LinkedHashMultimap.create();
 	
@@ -37,8 +37,8 @@ public class MqttServerVerticle extends AbstractVerticle{
 	
 	public void init(MqttServer mqttServer) {
 		mqttServer.endpointHandler(endpoint ->{
-			System.out.println("MQTT client [" + endpoint.clientIdentifier() + "] request to connect, clean session = " + endpoint.isCleanSession());
-			if(endpoint.auth().getUsername().contentEquals("mqttbroker") && endpoint.auth().getPassword().contentEquals("mqttbrokerpass")) {
+			System.out.println("Cliente MQTT [" + endpoint.clientIdentifier() + "] request to connect, clean session = " + endpoint.isCleanSession());
+			if(endpoint.auth().getUsername().contentEquals("luzverde") && endpoint.auth().getPassword().contentEquals("ZeUS")) {
 				endpoint.accept();
 				handleSubscription(endpoint);
 				handleUnSubscription(endpoint);
@@ -50,9 +50,9 @@ public class MqttServerVerticle extends AbstractVerticle{
 			}
 		}).listen(ar ->{
 			if(ar.succeeded()) {
-				System.out.println("MQTT server is listening on port "+ ar.result().actualPort());
+				System.out.println("Servidor MQTT en el puerto: "+ ar.result().actualPort());
 			}else {
-				System.out.println("Error on starting the server");
+				System.out.println("Error desplegando servidor");
 				ar.cause().printStackTrace();
 			}
 			
@@ -61,11 +61,11 @@ public class MqttServerVerticle extends AbstractVerticle{
 	
 	private void handleSubscription(MqttEndpoint endpoint) {
 		endpoint.subscribeHandler(subscribe ->{
-			List <MqttQoS> grantedQoSLevels = new ArrayList();
+			List <MqttQoS> grantedQoSLevels = new ArrayList<>();
 			for (MqttTopicSubscription s : subscribe.topicSubscriptions()) {
-				System.out.println("Subscription for " + s.topicName() + "with QoS " + s.qualityOfService());
+				System.out.println("Suscripcion a " + s.topicName() + "con QoS " + s.qualityOfService());
 				grantedQoSLevels.add(s.qualityOfService());
-				clients.put(s.topicName(), endpoint);		//MIERDA DE GOOGLE
+				clients.put(s.topicName(), endpoint);
 			}
 			endpoint.subscribeAcknowledge(subscribe.messageId(), grantedQoSLevels);
 		});
@@ -74,7 +74,7 @@ public class MqttServerVerticle extends AbstractVerticle{
 	private void handleUnSubscription (MqttEndpoint endpoint) {
 		endpoint.unsubscribeHandler(unsubscribe ->{
 			for (String t: unsubscribe.topics()) {
-				System.out.println("Unsubscribe for " + t);
+				System.out.println("Desuscripcion de " + t);
 			}
 			endpoint.unsubscribeAcknowledge(unsubscribe.messageId());
 		});
@@ -82,18 +82,14 @@ public class MqttServerVerticle extends AbstractVerticle{
 	
 	private void publishHandler(MqttEndpoint endpoint) {
 		endpoint.publishHandler(message ->{
-			
-			
 			if(message.qosLevel() == MqttQoS.AT_LEAST_ONCE) {
 				String topicName = message.topicName();
-				System.out.println("New Message published in " + topicName);
+				System.out.println("Nuevo mensaje en: " + topicName);
 				for (MqttEndpoint subscribed : clients.get(topicName)) {
 					subscribed.publish(message.topicName(), message.payload(), message.qosLevel() , message.isDup(), message.isRetain());
 				}
 				endpoint.publishAcknowledge(message.messageId());
 			}else if(message.qosLevel() == MqttQoS.EXACTLY_ONCE) {
-				// FALSO?
-				
 				endpoint.publishRelease(message.messageId());
 			}
 				
@@ -105,7 +101,7 @@ public class MqttServerVerticle extends AbstractVerticle{
 	
 	private void handleClientDisconnect (MqttEndpoint endpoint) {
 		endpoint.disconnectHandler(h ->{
-			System.out.println("The remote client has closed the connection");
+			System.out.println("El cliente remoto se ha desconectado");
 			
 		});
 	}
