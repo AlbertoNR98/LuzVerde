@@ -63,7 +63,7 @@ public class MqttServerVerticle extends AbstractVerticle{
 		endpoint.subscribeHandler(subscribe ->{
 			List <MqttQoS> grantedQoSLevels = new ArrayList<>();
 			for (MqttTopicSubscription s : subscribe.topicSubscriptions()) {
-				System.out.println("Suscripcion a " + s.topicName() + "con QoS " + s.qualityOfService());
+				System.out.println("Suscripción a " + s.topicName() + " con nivel QoS " + s.qualityOfService());
 				grantedQoSLevels.add(s.qualityOfService());
 				clients.put(s.topicName(), endpoint);
 			}
@@ -74,7 +74,7 @@ public class MqttServerVerticle extends AbstractVerticle{
 	private void handleUnSubscription (MqttEndpoint endpoint) {
 		endpoint.unsubscribeHandler(unsubscribe ->{
 			for (String t: unsubscribe.topics()) {
-				System.out.println("Desuscripcion de " + t);
+				System.out.println("Desuscripción de " + t);
 			}
 			endpoint.unsubscribeAcknowledge(unsubscribe.messageId());
 		});
@@ -84,7 +84,7 @@ public class MqttServerVerticle extends AbstractVerticle{
 		endpoint.publishHandler(message ->{
 			if(message.qosLevel() == MqttQoS.AT_LEAST_ONCE) {
 				String topicName = message.topicName();
-				System.out.println("Nuevo mensaje en: " + topicName);
+				System.out.println("\n----------Nuevo mensaje en " + topicName + "----------");
 				for (MqttEndpoint subscribed : clients.get(topicName)) {
 					subscribed.publish(message.topicName(), message.payload(), message.qosLevel() , message.isDup(), message.isRetain());
 				}

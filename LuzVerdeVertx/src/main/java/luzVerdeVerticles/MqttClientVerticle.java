@@ -2,6 +2,7 @@ package luzVerdeVerticles;
 
 import java.util.Calendar;
 import java.util.Random;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import io.netty.handler.codec.mqtt.MqttConnectReturnCode;
 import io.netty.handler.codec.mqtt.MqttQoS;
@@ -12,12 +13,17 @@ import io.vertx.core.json.Json;
 import io.vertx.mqtt.MqttClient;
 import io.vertx.mqtt.MqttClientOptions;
 import io.vertx.mqtt.impl.MqttClientImpl;
+import luzVerdeTipos.LuzSemaforo;
 import luzVerdeTipos.ValorSensorContaminacion;
+import luzVerdeTipos.ValorSensorTempHum;
 
 public class MqttClientVerticle extends AbstractVerticle{
 	
 	private String classInstanceId;
-	
+	private static final AtomicInteger ID_TH = new AtomicInteger();
+	private static final AtomicInteger ID_CONT = new AtomicInteger();
+	private static final AtomicInteger ID_LUZ = new AtomicInteger();
+
 	public void start (Promise<Void> promise) {
 		classInstanceId = this.hashCode() + "";
 		MqttClientOptions mqttClientOptions = new MqttClientOptions();
@@ -28,28 +34,52 @@ public class MqttClientVerticle extends AbstractVerticle{
 		mqttClientOptions.setKeepAliveTimeSeconds(10);
 		mqttClientOptions.setReconnectAttempts(10);
 		mqttClientOptions.setReconnectInterval(5000);
-		mqttClientOptions.setUsername("cruce1");
-		mqttClientOptions.setPassword("zeus");
+		mqttClientOptions.setUsername("luzverde");
+		mqttClientOptions.setPassword("ZeUS");
 		MqttClient mqttClient = new MqttClientImpl(vertx, mqttClientOptions);
 		
 		mqttClient.publishHandler(messageReceivedHandler -> {
 			System.out.println(messageReceivedHandler.payload().toString());
 		});
 		
-		mqttClient.connect(1885,"localhost", handler -> {
-			
+		Random random = new Random();
+		
+		mqttClient.connect(1885,"localhost", handler -> {	
 			if(handler.result().code() == MqttConnectReturnCode.CONNECTION_ACCEPTED) {
 				
 				mqttClient.subscribe(MqttServerVerticle.TOPIC_LUZ, MqttQoS.AT_LEAST_ONCE.value(), handlerSubscribe -> {
 					if(handlerSubscribe.succeeded()) {
-						System.out.println(classInstanceId + " subscribed to " + MqttServerVerticle.TOPIC_LUZ + " topic");
-						vertx.setPeriodic(8000, periodic -> {
-							Random random = new Random();
-							ValorSensorContaminacion sensorValue = new ValorSensorContaminacion(1, 1, 30 + random.nextInt(10), 5 + random.nextInt(5), Calendar.getInstance().getTimeInMillis());
-							mqttClient.publish(MqttServerVerticle.TOPIC_LUZ, Buffer.buffer(Json.encodePrettily(sensorValue)) , MqttQoS.AT_LEAST_ONCE, false, true);
+						System.out.println(classInstanceId + " suscrito a " + MqttServerVerticle.TOPIC_LUZ);
+						vertx.setPeriodic(10000, periodic -> {
+							LuzSemaforo luz = new LuzSemaforo(ID_LUZ.getAndIncrement()+1, random.nextBoolean() ? "Verde" : "Rojo", Calendar.getInstance().getTimeInMillis(), 1);
+							mqttClient.publish(MqttServerVerticle.TOPIC_LUZ, Buffer.buffer(Json.encodePrettily(luz)) , MqttQoS.AT_LEAST_ONCE, false, true);
 						});
 					}else {
-						System.out.println(classInstanceId + "NOT suscribed to" + MqttServerVerticle.TOPIC_LUZ);
+						System.out.println(classInstanceId + "no se ha suscrito a " + MqttServerVerticle.TOPIC_LUZ);
+					}
+				});
+				
+				mqttClient.subscribe(MqttServerVerticle.TOPIC_CONT, MqttQoS.AT_LEAST_ONCE.value(), handlerSubscribe -> {
+					if(handlerSubscribe.succeeded()) {
+						System.out.println(classInstanceId + " suscrito a " + MqttServerVerticle.TOPIC_CONT);
+						vertx.setPeriodic((5 + random.nextInt(5)) * 1000, periodic -> {
+							ValorSensorContaminacion sensorValueC = new ValorSensorContaminacion(ID_CONT.getAndIncrement()+1, 1, 0.5f + random.nextInt(2), 0.05f + random.nextInt(1), Calendar.getInstance().getTimeInMillis());
+							mqttClient.publish(MqttServerVerticle.TOPIC_CONT, Buffer.buffer(Json.encodePrettily(sensorValueC)) , MqttQoS.AT_LEAST_ONCE, false, true);
+						});
+					}else {
+						System.out.println(classInstanceId + "no se ha suscrito a" + MqttServerVerticle.TOPIC_CONT);
+					}
+				});
+				
+				mqttClient.subscribe(MqttServerVerticle.TOPIC_TEMP_HUM, MqttQoS.AT_LEAST_ONCE.value(), handlerSubscribe -> {
+					if(handlerSubscribe.succeeded()) {
+						System.out.println(classInstanceId + " suscrito a " + MqttServerVerticle.TOPIC_TEMP_HUM + " topic");
+						vertx.setPeriodic((7 + random.nextInt(5)) * 1000, periodic -> {
+							ValorSensorTempHum sensorValueTH = new ValorSensorTempHum(ID_TH.getAndIncrement()+1, 30 + random.nextInt(10), 5, 50 + random.nextInt(5), 3, Calendar.getInstance().getTimeInMillis(), 1);
+							mqttClient.publish(MqttServerVerticle.TOPIC_TEMP_HUM, Buffer.buffer(Json.encodePrettily(sensorValueTH)) , MqttQoS.AT_LEAST_ONCE, false, true);
+						});
+					}else {
+						System.out.println(classInstanceId + "no se ha suscrito a " + MqttServerVerticle.TOPIC_TEMP_HUM);
 					}
 				});
 			}else {
