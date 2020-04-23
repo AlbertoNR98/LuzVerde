@@ -40,16 +40,16 @@ public class MqttClientVerticle extends AbstractVerticle{
 			
 			if(handler.result().code() == MqttConnectReturnCode.CONNECTION_ACCEPTED) {
 				
-				mqttClient.subscribe(MqttServerVerticle.TOPIC_DOMO, MqttQoS.AT_LEAST_ONCE.value(), handlerSubscribe -> {
+				mqttClient.subscribe(MqttServerVerticle.TOPIC_LUZ, MqttQoS.AT_LEAST_ONCE.value(), handlerSubscribe -> {
 					if(handlerSubscribe.succeeded()) {
-						System.out.println(classInstanceId + " subscribed to " + MqttServerVerticle.TOPIC_DOMO + " topic");
+						System.out.println(classInstanceId + " subscribed to " + MqttServerVerticle.TOPIC_LUZ + " topic");
 						vertx.setPeriodic(8000, periodic -> {
 							Random random = new Random();
 							ValorSensorContaminacion sensorValue = new ValorSensorContaminacion(1, 1, 30 + random.nextInt(10), 5 + random.nextInt(5), Calendar.getInstance().getTimeInMillis());
-							mqttClient.publish(MqttServerVerticle.TOPIC_DOMO, Buffer.buffer(Json.encodePrettily(sensorValue)) , MqttQoS.AT_LEAST_ONCE, false, true);
+							mqttClient.publish(MqttServerVerticle.TOPIC_LUZ, Buffer.buffer(Json.encodePrettily(sensorValue)) , MqttQoS.AT_LEAST_ONCE, false, true);
 						});
 					}else {
-						System.out.println(classInstanceId + "NOT suscribed to" + MqttServerVerticle.TOPIC_DOMO);
+						System.out.println(classInstanceId + "NOT suscribed to" + MqttServerVerticle.TOPIC_LUZ);
 					}
 				});
 			}else {
