@@ -2,19 +2,30 @@
 #include "ArduinoJson.h"
 #include <ESP8266WiFi.h>
 #include <ESP8266HTTPClient.h>
-#include  <SoftwareSerial.h>
+#include <SoftwareSerial.h>
+#include <stdlib.h>
+
+int idCruce = 1;
 
 char responseBuffer[300];
 WiFiClient client;
 
-String SSID = "poneraquielssid";
-String PASS = "poneraquilacontraseña";
+String SSID = "ONO4AE9";
+String PASS = "xREAtH9aZ9ba";
 
-String SERVER_IP = "www.mocky.io";
-int SERVER_PORT = 80;
+String SERVER_IP = "192.168.1.252";
+int SERVER_PORT = 8082; //Puerto API REST
 
-void sendGetRequest();
-void sendPostRequest();
+//void sendGetRequest();
+//void sendPostRequest();
+
+//void getSemaforosByCruce();
+//void getLucesSemaforoBySemaforo();
+//void getSensorBySemaforo();
+
+void putValorSensorCont();
+void putValorSensorTempHum();
+void putLuz();
 
 void setup() {
   Serial.begin(9600);
@@ -31,54 +42,79 @@ void setup() {
 }
 
 void loop() {
-  sendGetRequest();
+  putValorSensorCont();
   delay(3000);
-  sendPostRequest();
+  putValorSensorTempHum();
+  delay(3000);
+  putLuz();
   delay(3000);
 }
 
-void sendGetRequest(){
+void putValorSensorCont(){
   if (WiFi.status() == WL_CONNECTED){
     HTTPClient http;
-    http.begin(client, SERVER_IP, SERVER_PORT, "/v2/5185415ba171ea3a00704eed", true);
-    int httpCode = http.GET();
+    http.begin(client, SERVER_IP, SERVER_PORT, "/api/valores_sensor_contaminacion", true);
+    http.addHeader("Content-Type", "application/json");
+
+    const size_t capacity = JSON_OBJECT_SIZE(4) + JSON_ARRAY_SIZE(2) + 60;
+    DynamicJsonDocument doc(capacity);
+    doc["value"] = 2.4;
+    doc["acccuracy"] = 1.0;
+    doc["timestamp"] = 124123123;
+    doc["idSensor"] = 3;
+
+    String output;
+    serializeJson(doc, output);
+
+    int httpCode = http.PUT(output);
 
     Serial.println("Response code: " + httpCode);
 
     String payload = http.getString();
 
-    const size_t capacity = JSON_OBJECT_SIZE(3) + JSON_ARRAY_SIZE(2) + 60;
-    DynamicJsonDocument doc(capacity);
-
-    DeserializationError error = deserializeJson(doc, payload);
-    if (error){
-      Serial.print("deserializeJson() failed: ");
-      Serial.println(error.c_str());
-      return;
-    }
-    Serial.println(F("Response:"));
-    String sensor = doc["sensor"].as<char*>();
-    long time = doc["time"].as<long>();
-    float data = doc["data"].as<float>();
-
-    Serial.println("Sensor name: " + sensor);
-    Serial.println("Time: " + String(time));
-    Serial.println("Data: " + String(data));
+    Serial.println("Resultado: " + payload);
   }
 }
 
-void sendPostRequest(){
+void putValorSensorTempHum(){
   if (WiFi.status() == WL_CONNECTED){
     HTTPClient http;
-    http.begin(client, SERVER_IP, SERVER_PORT, "/v2/5185415ba171ea3a00704eed", true);
+    http.begin(client, SERVER_IP, SERVER_PORT, "/api/valores_sensor_temp_hum", true);
+    http.addHeader("Content-Type", "application/json");
+
+    const size_t capacity = JSON_OBJECT_SIZE(6) + JSON_ARRAY_SIZE(2) + 60;
+    DynamicJsonDocument doc(capacity);
+    doc["valueTemp"] = 41.3;
+    doc["acccuracyTemp"] = 1.0;
+    doc["valueTemp"] = 80.2;
+    doc["acccuracyTemp"] = 1.0;
+    doc["timestamp"] = 124123123;
+    doc["idSensor"] = 1;
+
+    String output;
+    serializeJson(doc, output);
+
+    int httpCode = http.PUT(output);
+
+    Serial.println("Response code: " + httpCode);
+
+    String payload = http.getString();
+
+    Serial.println("Resultado: " + payload);
+  }
+}
+
+void putLuz(){
+  if (WiFi.status() == WL_CONNECTED){
+    HTTPClient http;
+    http.begin(client, SERVER_IP, SERVER_PORT, "/api/luces", true);
     http.addHeader("Content-Type", "application/json");
 
     const size_t capacity = JSON_OBJECT_SIZE(3) + JSON_ARRAY_SIZE(2) + 60;
     DynamicJsonDocument doc(capacity);
-    doc["temperature"] = 18;
-    doc["humidity"] = 78;
+    doc["color"] = "Verde";
     doc["timestamp"] = 124123123;
-    doc["name"] = "sensor1";
+    doc["idSemaforo"] = 3;
 
     String output;
     serializeJson(doc, output);
