@@ -10,22 +10,15 @@ int idCruce = 1;
 char responseBuffer[300];
 WiFiClient client;
 
-String SSID = "ONO4AE9";
-String PASS = "xREAtH9aZ9ba";
+String SSID = ""; //Poner el SSID
+String PASS = ""; //Poner la contraseña
 
-String SERVER_IP = "192.168.1.252";
+String SERVER_IP = "";  //Poner la IP del servidor
 int SERVER_PORT = 8082; //Puerto API REST
-
-//void sendGetRequest();
-//void sendPostRequest();
-
-//void getSemaforosByCruce();
-//void getLucesSemaforoBySemaforo();
-//void getSensorBySemaforo();
 
 void putValorSensorCont();
 void putValorSensorTempHum();
-void putLuz();
+void putLuz(const char*);
 
 void setup() {
   Serial.begin(9600);
@@ -46,7 +39,9 @@ void loop() {
   delay(3000);
   putValorSensorTempHum();
   delay(3000);
-  putLuz();
+  putLuz("Verde");
+  delay(3000);
+  putLuz("Rojo");
   delay(3000);
 }
 
@@ -56,10 +51,10 @@ void putValorSensorCont(){
     http.begin(client, SERVER_IP, SERVER_PORT, "/api/valores_sensor_contaminacion", true);
     http.addHeader("Content-Type", "application/json");
 
-    const size_t capacity = JSON_OBJECT_SIZE(4) + JSON_ARRAY_SIZE(2) + 60;
+    const size_t capacity = JSON_OBJECT_SIZE(4) + JSON_ARRAY_SIZE(3) + 60;
     DynamicJsonDocument doc(capacity);
     doc["value"] = 2.4;
-    doc["acccuracy"] = 1.0;
+    doc["accuracy"] = 1.0;
     doc["timestamp"] = 124123123;
     doc["idSensor"] = 3;
 
@@ -82,14 +77,14 @@ void putValorSensorTempHum(){
     http.begin(client, SERVER_IP, SERVER_PORT, "/api/valores_sensor_temp_hum", true);
     http.addHeader("Content-Type", "application/json");
 
-    const size_t capacity = JSON_OBJECT_SIZE(6) + JSON_ARRAY_SIZE(2) + 60;
+    const size_t capacity = JSON_OBJECT_SIZE(6) + JSON_ARRAY_SIZE(4) + 60;
     DynamicJsonDocument doc(capacity);
     doc["valueTemp"] = 41.3;
-    doc["acccuracyTemp"] = 1.0;
+    doc["accuracyTemp"] = 1.0;
     doc["valueTemp"] = 80.2;
-    doc["acccuracyTemp"] = 1.0;
+    doc["accuracyTemp"] = 1.0;
     doc["timestamp"] = 124123123;
-    doc["idSensor"] = 1;
+    doc["idSensor"] = 10;
 
     String output;
     serializeJson(doc, output);
@@ -104,7 +99,7 @@ void putValorSensorTempHum(){
   }
 }
 
-void putLuz(){
+void putLuz(const char* color){
   if (WiFi.status() == WL_CONNECTED){
     HTTPClient http;
     http.begin(client, SERVER_IP, SERVER_PORT, "/api/luces", true);
@@ -112,7 +107,7 @@ void putLuz(){
 
     const size_t capacity = JSON_OBJECT_SIZE(3) + JSON_ARRAY_SIZE(2) + 60;
     DynamicJsonDocument doc(capacity);
-    doc["color"] = "Verde";
+    doc["color"] = color;
     doc["timestamp"] = 124123123;
     doc["idSemaforo"] = 3;
 
