@@ -51,11 +51,10 @@ void putValorSensorCont(){
     http.begin(client, SERVER_IP, SERVER_PORT, "/api/valores_sensor_contaminacion", true);
     http.addHeader("Content-Type", "application/json");
 
-    const size_t capacity = JSON_OBJECT_SIZE(4) + JSON_ARRAY_SIZE(3) + 60;
+    const size_t capacity = JSON_OBJECT_SIZE(3) + JSON_ARRAY_SIZE(3) + 60;
     DynamicJsonDocument doc(capacity);
     doc["value"] = 2.4;
     doc["accuracy"] = 1.0;
-    doc["timestamp"] = 124123123;
     doc["idSensor"] = 3;
 
     String output;
@@ -77,13 +76,12 @@ void putValorSensorTempHum(){
     http.begin(client, SERVER_IP, SERVER_PORT, "/api/valores_sensor_temp_hum", true);
     http.addHeader("Content-Type", "application/json");
 
-    const size_t capacity = JSON_OBJECT_SIZE(6) + JSON_ARRAY_SIZE(4) + 60;
+    const size_t capacity = JSON_OBJECT_SIZE(5) + JSON_ARRAY_SIZE(4) + 60;
     DynamicJsonDocument doc(capacity);
     doc["valueTemp"] = 41.3;
     doc["accuracyTemp"] = 1.0;
     doc["valueTemp"] = 80.2;
     doc["accuracyTemp"] = 1.0;
-    doc["timestamp"] = 124123123;
     doc["idSensor"] = 10;
 
     String output;
@@ -105,10 +103,9 @@ void putLuz(const char* color){
     http.begin(client, SERVER_IP, SERVER_PORT, "/api/luces", true);
     http.addHeader("Content-Type", "application/json");
 
-    const size_t capacity = JSON_OBJECT_SIZE(3) + JSON_ARRAY_SIZE(2) + 60;
+    const size_t capacity = JSON_OBJECT_SIZE(2) + JSON_ARRAY_SIZE(2) + 60;
     DynamicJsonDocument doc(capacity);
     doc["color"] = color;
-    doc["timestamp"] = 124123123;
     doc["idSemaforo"] = 3;
 
     String output;
