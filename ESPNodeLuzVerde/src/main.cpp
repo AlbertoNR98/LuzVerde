@@ -6,7 +6,7 @@
 #include <stdlib.h>
 #include <PubSubClient.h>
 
-int idCruce = 1;
+int idCruce = 1; //Probar ESP.getChipID o numero aleatorio, como en el ID de cliente MQTT
 
 char responseBuffer[300];
 WiFiClient espclient;
@@ -15,16 +15,19 @@ PubSubClient client(espclient);
 String SSID = ""; //Poner el SSID
 String PASS = ""; //Poner la contraseña
 
-const char* mqtt_server= ""; //Dirección del broker mqtt (noze-cual-es)
-
-String SERVER_IP = "";  //Poner la IP del servidor
+String SERVER_IP = "";  //Poner la IP del servidor API REST
 int SERVER_PORT = 8082; //Puerto API REST
+
+const char* mqtt_server= ""; //Dirección del broker mqtt
+const int mqtt_port = 1885;
+const char* mqtt_user = "luzverde";
+const char* mqtt_password = "ZeUS";
+const char* mqtt_topic ="luces";
 
 unsigned long lastMsg=0;
 #define MSG_BUFFER_SIZE (50)
 char msg[MSG_BUFFER_SIZE];
 int value =0;
-
 
 void putValorSensorCont();
 void putValorSensorTempHum();
@@ -40,6 +43,7 @@ void callback(char* topic , byte* payload, int lenght){
       Serial.print((char)payload[i]);
     }
 }
+
 void reconnect() {
   // Loop until we're reconnected
   while (!client.connected()) {
@@ -48,12 +52,8 @@ void reconnect() {
     String clientId = "ESP8266Client-";
     clientId += String(random(0xffff), HEX);
     // Attempt to connect
-    if (client.connect(clientId.c_str())) {
-      Serial.println("connected");
-      // Once connected, publish an announcement...
-      client.publish("outTopic", "hello world");
-      // ... and resubscribe
-      client.subscribe("inTopic");
+    if (client.connect(clientId.c_str(), mqtt_user, mqtt_password)) {
+      Serial.println("MQTT connected");
     } else {
       Serial.print("failed, rc=");
       Serial.print(client.state());
@@ -67,19 +67,21 @@ void reconnect() {
 void setup() {
   Serial.begin(9600);
   WiFi.begin(SSID, PASS);
-  Serial.print("Connecting...");
+  Serial.print("Connecting to WiFi...");
   while (WiFi.status() != WL_CONNECTED){
     delay(500);
     Serial.print(".");
   }
-  Serial.print("Connected, IP address: ");
+  Serial.print("Connected to WiFi. IP address: ");
   Serial.print(WiFi.localIP());
 
-  client.setServer(mqtt_server,1885);
+  client.setServer(mqtt_server,mqtt_port);
   client.setCallback(callback);
 }
 
 void loop() {
+  /*
+  //Código de la API REST
   putValorSensorCont();
   delay(3000);
   putValorSensorTempHum();
@@ -88,8 +90,36 @@ void loop() {
   delay(3000);
   putLuz("Rojo");
   delay(3000);
+  */
+  if(!client.connected()){
+    reconnect();
+  }
+  client.loop();
+
+  String payload = "{";
+
+  payload += "\"idLuz_Semaforo\" : ";
+  payload += 1;
+  payload += ",\"color\" : ";
+  payload += "\"Rojo""";
+  payload += ",\"timestamp\" : ";
+  payload += 12131415;
+  payload += ",\"idSemaforo\" : ";
+  payload += 1;
+
+  payload += "}";
+
+  Serial.println(payload);
+  if (client.publish(mqtt_topic, (char*) payload.c_str())) {
+    Serial.println("Publish ok");
+  } else {
+    Serial.println("Publish failed");
+  }
+
+  delay(5000);
 }
 
+//Funciones de la API REST utilizadas en la placa
 void putValorSensorCont(){
   if (WiFi.status() == WL_CONNECTED){
     HTTPClient http;
