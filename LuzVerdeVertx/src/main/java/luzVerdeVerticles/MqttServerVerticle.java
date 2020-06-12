@@ -82,11 +82,12 @@ public class MqttServerVerticle extends AbstractVerticle{
 	
 	private void publishHandler(MqttEndpoint endpoint) {
 		endpoint.publishHandler(message ->{
-			if(message.qosLevel() == MqttQoS.AT_LEAST_ONCE) {
+			if(message.qosLevel() == MqttQoS.AT_MOST_ONCE) {
 				String topicName = message.topicName();
 				System.out.println("\n----------Nuevo mensaje en " + topicName + "----------");
 				for (MqttEndpoint subscribed : clients.get(topicName)) {
 					subscribed.publish(message.topicName(), message.payload(), message.qosLevel() , message.isDup(), message.isRetain());
+					System.out.println(message.payload().toJsonObject());
 				}
 				endpoint.publishAcknowledge(message.messageId());
 			}else if(message.qosLevel() == MqttQoS.EXACTLY_ONCE) {

@@ -193,7 +193,7 @@
 			"response": []
 		},
 		{
-			"name": "getValueBySensor",
+			"name": "getValueBySensorCont",
 			"request": {
 				"method": "GET",
 				"header": [],
@@ -214,7 +214,7 @@
 			"response": []
 		},
 		{
-			"name": "getValueBySensor2",
+			"name": "getValueBySensorTempHum",
 			"request": {
 				"method": "GET",
 				"header": [],
@@ -270,7 +270,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n\t\"idCruce\": 100,\n\t\"ipCruce\": \"212.212.212.212\",\n\t\"nombreCruce\": \"Avda. Palmera - Cardenal Ilundain\",\n\t\"initialTimestamp\": 10000,\n\t\"idUsuario\": 1\n}",
+					"raw": "{\n\t\"idCruce\": 100,\n\t\"ipCruce\": \"212.212.212.212\",\n\t\"nombreCruce\": \"Avda. Palmera - Cardenal Ilundain\",\n\t\"idUsuario\": 1\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -506,7 +506,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n  \"value\" : 1.9,\r\n  \"accuracy\" : 1.0,\r\n  \"timestamp\" : 999999999,\r\n  \"idSensor\" : 3\r\n}",
+					"raw": "{\r\n  \"value\" : 1.9,\r\n  \"accuracy\" : 1.0,\r\n  \"idSensor\" : 3\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -535,7 +535,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n  \"valueTemp\" : 40.0,\r\n  \"accuracyTemp\" : 1.0,\r\n  \"valueHum\" : 80.0,\r\n  \"accuracyHum\" : 1.0,\r\n  \"timestamp\" : 999999999,\r\n  \"idSensor\" : 1\r\n}",
+					"raw": "{\r\n  \"valueTemp\" : 40.0,\r\n  \"accuracyTemp\" : 1.0,\r\n  \"valueHum\" : 80.0,\r\n  \"accuracyHum\" : 1.0,\r\n  \"idSensor\" : 1\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -600,7 +600,7 @@
 			"response": []
 		},
 		{
-			"name": "deleteSensorBySemaforo",
+			"name": "deleteSensorByID",
 			"request": {
 				"method": "DELETE",
 				"header": [],

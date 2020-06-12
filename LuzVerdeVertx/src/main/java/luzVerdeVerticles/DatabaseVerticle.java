@@ -8,6 +8,9 @@ import luzVerdeTipos.Sensor;
 import luzVerdeTipos.Usuario;
 import luzVerdeTipos.ValorSensorContaminacion;
 import luzVerdeTipos.ValorSensorTempHum;
+
+import java.util.Calendar;
+
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Promise;
 import io.vertx.core.json.Json;
@@ -246,16 +249,18 @@ public class DatabaseVerticle extends AbstractVerticle{
 	}
 	
 	private void postCruce(RoutingContext routingContext) {
+		long timest = Calendar.getInstance().getTimeInMillis();
 		Cruce cruce = Json.decodeValue(routingContext.getBodyAsString(), Cruce.class);
 		mySQLPool.preparedQuery(
 				"INSERT INTO luzverde.cruce (idCruce, ipCruce, nombreCruce, initialTimestamp, idUsuario) VALUES (?,?,?,?,?)",
-				Tuple.of(cruce.getIdCruce(), cruce.getIpCruce(), cruce.getNombreCruce(), cruce.getInitialTimestamp(), cruce.getIdUsuario()),
+				Tuple.of(cruce.getIdCruce(), cruce.getIpCruce(), cruce.getNombreCruce(), timest, cruce.getIdUsuario()),
 				res -> {
 					if (res.succeeded()) {
 						System.out.println(res.result().rowCount()+" filas insertadas");
 						
 						long id = res.result().property(MySQLClient.LAST_INSERTED_ID);
 						cruce.setIdUsuario((int) id);
+						cruce.setInitialTimestamp(timest);
 						
 						routingContext.response().setStatusCode(200).putHeader("content-type", "application/json")
 								.end(JsonObject.mapFrom(cruce).encodePrettily());
@@ -411,15 +416,17 @@ public class DatabaseVerticle extends AbstractVerticle{
 	}
 	
 	private void putLuz(RoutingContext routingContext) {
+		long timest = Calendar.getInstance().getTimeInMillis();
 		LuzSemaforo luz = Json.decodeValue(routingContext.getBodyAsString(), LuzSemaforo.class);
 		mySQLPool.preparedQuery(
 				"INSERT INTO luzverde.luz_semaforo (color, timestamp, idSemaforo) VALUES (?,?,?)",
-				Tuple.of(luz.getColor(), luz.getTimestamp(), luz.getIdSemaforo()),
+				Tuple.of(luz.getColor(), timest, luz.getIdSemaforo()),
 				res -> {
 					if (res.succeeded()) {
 						System.out.println(res.result().rowCount()+" filas insertadas");
 						long id = res.result().property(MySQLClient.LAST_INSERTED_ID);
 						luz.setIdLuz_Semaforo((int) id);
+						luz.setTimestamp(timest);
 						routingContext.response().setStatusCode(200).putHeader("content-type", "application/json")
 								.end(JsonObject.mapFrom(luz).encodePrettily());
 					} else {
@@ -529,16 +536,18 @@ public class DatabaseVerticle extends AbstractVerticle{
 	}
 	 
 	private void putValorContaminacion(RoutingContext routingContext) {
+		long timest = Calendar.getInstance().getTimeInMillis();
 		ValorSensorContaminacion sensor = Json.decodeValue(routingContext.getBodyAsString(), ValorSensorContaminacion.class);
 		mySQLPool.preparedQuery(
 				"INSERT INTO luzverde.valor_sensor_contaminacion (value, accuracy, timestamp, idSensor) VALUES (?,?,?,?)",
-				Tuple.of(sensor.getValue(),sensor.getAccuracy(),sensor.getTimestamp(),sensor.getIdSensor()),
+				Tuple.of(sensor.getValue(),sensor.getAccuracy(),timest,sensor.getIdSensor()),
 				res -> {
 					if (res.succeeded()) {
 						System.out.println(res.result().rowCount()+" filas insertadas");
 						
 						long id = res.result().property(MySQLClient.LAST_INSERTED_ID);
 						sensor.setIdValor_sensor_contaminacion((int) id);
+						sensor.setTimestamp(timest);
 						
 						routingContext.response().setStatusCode(200).putHeader("content-type", "application/json")
 								.end(JsonObject.mapFrom(sensor).encodePrettily());
@@ -573,16 +582,18 @@ public class DatabaseVerticle extends AbstractVerticle{
 	}
 	
 	private void putValorTempHum(RoutingContext routingContext) {
+		long timest = Calendar.getInstance().getTimeInMillis();
 		ValorSensorTempHum sensor = Json.decodeValue(routingContext.getBodyAsString(), ValorSensorTempHum.class);
 		mySQLPool.preparedQuery(
 				"INSERT INTO luzverde.valor_sensor_temp_hum (valueTemp, accuracyTemp, valueHum, accuracyHum, timestamp, idSensor) VALUES (?,?,?,?,?,?)",
-				Tuple.of(sensor.getValueTemp(),sensor.getAccuracyTemp(),sensor.getValueHum(),sensor.getAccuracyHum(),sensor.getTimestamp(),sensor.getIdSensor()),
+				Tuple.of(sensor.getValueTemp(),sensor.getAccuracyTemp(),sensor.getValueHum(),sensor.getAccuracyHum(),timest,sensor.getIdSensor()),
 				res -> {
 					if (res.succeeded()) {
 						System.out.println(res.result().rowCount()+" filas insertadas");
 						
 						long id = res.result().property(MySQLClient.LAST_INSERTED_ID);
 						sensor.setIdValor_sensor_temp_hum((int) id);
+						sensor.setTimestamp(timest);
 						
 						routingContext.response().setStatusCode(200).putHeader("content-type", "application/json")
 								.end(JsonObject.mapFrom(sensor).encodePrettily());
