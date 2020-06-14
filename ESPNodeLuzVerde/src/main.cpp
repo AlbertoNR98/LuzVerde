@@ -6,19 +6,19 @@
 #include <stdlib.h>
 #include <PubSubClient.h>
 
-int idCruce = 1; //Probar ESP.getChipID o numero aleatorio, como en el ID de cliente MQTT
+int idCruce = 1; //Probar ESP.getChipID o numero aleatorio, como en el ID de cliente MQTT (String clientId = String(random(0xffff), HEX);)
 
 char responseBuffer[300];
 WiFiClient espclient;
 PubSubClient client(espclient);
 
-String SSID = ""; //Poner el SSID
-String PASS = ""; //Poner la contraseña
+String SSID = "ONO4AE9"; //Poner el SSID
+String PASS = "xREAtH9aZ9ba"; //Poner la contraseña
 
-String SERVER_IP = "";  //Poner la IP del servidor API REST
+String SERVER_IP = "192.168.1.252";  //Poner la IP del servidor API REST
 int SERVER_PORT = 8082; //Puerto API REST
 
-const char* mqtt_server= ""; //Dirección del broker mqtt
+const char* mqtt_server= "192.168.1.252"; //Dirección del broker mqtt
 const int mqtt_port = 1885;
 const char* mqtt_user = "luzverde";
 const char* mqtt_password = "ZeUS";
@@ -47,17 +47,16 @@ void callback(char* topic , byte* payload, int lenght){
 void reconnect() {
   // Loop until we're reconnected
   while (!client.connected()) {
-    Serial.print("Attempting MQTT connection...");
-    // Create a random client ID
-    String clientId = "ESP8266Client-";
-    clientId += String(random(0xffff), HEX);
+    Serial.print("Iniciando conexión MQTT...");
+    // ID cliente
+    String clientId = String(ESP.getChipId());
     // Attempt to connect
     if (client.connect(clientId.c_str(), mqtt_user, mqtt_password)) {
-      Serial.println("MQTT connected");
+      Serial.println("Conectado a MQTT");
     } else {
-      Serial.print("failed, rc=");
+      Serial.print("Error, rc=");
       Serial.print(client.state());
-      Serial.println(" try again in 5 seconds");
+      Serial.println(" Intentando conexión en 5 segundos...");
       // Wait 5 seconds before retrying
       delay(5000);
     }
@@ -67,12 +66,12 @@ void reconnect() {
 void setup() {
   Serial.begin(9600);
   WiFi.begin(SSID, PASS);
-  Serial.print("Connecting to WiFi...");
+  Serial.print("Conectando a WiFi...");
   while (WiFi.status() != WL_CONNECTED){
     delay(500);
     Serial.print(".");
   }
-  Serial.print("Connected to WiFi. IP address: ");
+  Serial.print("Conectado a WiFi. Dirección IP: ");
   Serial.print(WiFi.localIP());
 
   client.setServer(mqtt_server,mqtt_port);
@@ -98,22 +97,22 @@ void loop() {
 
   String payload = "{";
 
-  payload += "\"idLuz_Semaforo\" : ";
+  payload += "\"idLuz_Semaforo\": ";
   payload += 1;
-  payload += ",\"color\" : ";
+  payload += ", \"color\": ";
   payload += "\"Rojo""";
-  payload += ",\"timestamp\" : ";
+  payload += ", \"timestamp\": ";
   payload += 12131415;
-  payload += ",\"idSemaforo\" : ";
+  payload += ", \"idSemaforo\": ";
   payload += 1;
 
   payload += "}";
 
   Serial.println(payload);
   if (client.publish(mqtt_topic, (char*) payload.c_str())) {
-    Serial.println("Publish ok");
+    Serial.println("Publicación correcta");
   } else {
-    Serial.println("Publish failed");
+    Serial.println("Error en la publicación");
   }
 
   delay(5000);
