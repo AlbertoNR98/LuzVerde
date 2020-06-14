@@ -8,9 +8,6 @@ import luzVerdeTipos.Sensor;
 import luzVerdeTipos.Usuario;
 import luzVerdeTipos.ValorSensorContaminacion;
 import luzVerdeTipos.ValorSensorTempHum;
-
-import java.util.Calendar;
-
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Promise;
 import io.vertx.core.json.Json;
@@ -63,6 +60,7 @@ public class DatabaseVerticle extends AbstractVerticle{
 		router.route("/api/usuarios*").handler(BodyHandler.create());
 		
 		router.get("/api/usuarios/:idUsuario").handler(this::getUserByID);
+		router.get("/api/usuario/:dni").handler(this::getIdByDni);
 		router.get("/api/usuarios").handler(this::getAllUsers);
 		router.post("/api/usuarios").handler(this::postUser);
 		router.put("/api/usuarios/:idUsuario").handler(this::updateUserByID);
@@ -109,6 +107,7 @@ public class DatabaseVerticle extends AbstractVerticle{
 		router.route("/api/valores_sensor_contaminacion*").handler(BodyHandler.create());
 		
 		router.get("/api/valores_sensor_contaminacion/:idSensor").handler(this::getValueBySensorCont);
+		router.get("/api/valores_sensor_contaminacion/:nombreSemaforo/:C02").handler(this::getValueBySemaforo);
 		router.put("/api/valores_sensor_contaminacion").handler(this::putValorContaminacion);
 		
 			//Sensor Temperatura y humedad
@@ -151,6 +150,23 @@ public class DatabaseVerticle extends AbstractVerticle{
 				}
 				routingContext.response().setStatusCode(200).putHeader("content-type", "application/json").end(result.encodePrettily());						
 
+			}else {
+				System.out.println("Error al hacer la operación");
+				routingContext.response().setStatusCode(401).putHeader("content-type", "application/json").end((JsonObject.mapFrom(res.cause()).encodePrettily()));
+			}
+		});
+	}
+	
+	private void getIdByDni(RoutingContext routingContext) {
+		mySQLPool.query("Select * from luzverde.usuario where dni= (\""+ routingContext.request().getParam("dni")+"\")" , res->{
+			if(res.succeeded()) {
+				RowSet<Row> resultSet = res.result();
+				System.out.println(resultSet.size() + " elemento obtenido");
+				JsonArray result = new JsonArray();
+				for(Row row : resultSet) {
+					result.add(JsonObject.mapFrom(new Usuario(row.getInteger("idUsuario"), row.getString("nombre"), row.getString("apellidos"), row.getString("dni"), row.getInteger("fnacimiento"))));
+				}
+				routingContext.response().setStatusCode(200).putHeader("content-type", "application/json").end(result.encodePrettily());
 			}else {
 				System.out.println("Error al hacer la operación");
 				routingContext.response().setStatusCode(401).putHeader("content-type", "application/json").end((JsonObject.mapFrom(res.cause()).encodePrettily()));
@@ -249,18 +265,16 @@ public class DatabaseVerticle extends AbstractVerticle{
 	}
 	
 	private void postCruce(RoutingContext routingContext) {
-		long timest = Calendar.getInstance().getTimeInMillis();
 		Cruce cruce = Json.decodeValue(routingContext.getBodyAsString(), Cruce.class);
 		mySQLPool.preparedQuery(
 				"INSERT INTO luzverde.cruce (idCruce, ipCruce, nombreCruce, initialTimestamp, idUsuario) VALUES (?,?,?,?,?)",
-				Tuple.of(cruce.getIdCruce(), cruce.getIpCruce(), cruce.getNombreCruce(), timest, cruce.getIdUsuario()),
+				Tuple.of(cruce.getIdCruce(), cruce.getIpCruce(), cruce.getNombreCruce(), cruce.getInitialTimestamp(), cruce.getIdUsuario()),
 				res -> {
 					if (res.succeeded()) {
 						System.out.println(res.result().rowCount()+" filas insertadas");
 						
 						long id = res.result().property(MySQLClient.LAST_INSERTED_ID);
 						cruce.setIdUsuario((int) id);
-						cruce.setInitialTimestamp(timest);
 						
 						routingContext.response().setStatusCode(200).putHeader("content-type", "application/json")
 								.end(JsonObject.mapFrom(cruce).encodePrettily());
@@ -416,17 +430,15 @@ public class DatabaseVerticle extends AbstractVerticle{
 	}
 	
 	private void putLuz(RoutingContext routingContext) {
-		long timest = Calendar.getInstance().getTimeInMillis();
 		LuzSemaforo luz = Json.decodeValue(routingContext.getBodyAsString(), LuzSemaforo.class);
 		mySQLPool.preparedQuery(
 				"INSERT INTO luzverde.luz_semaforo (color, timestamp, idSemaforo) VALUES (?,?,?)",
-				Tuple.of(luz.getColor(), timest, luz.getIdSemaforo()),
+				Tuple.of(luz.getColor(), luz.getTimestamp(), luz.getIdSemaforo()),
 				res -> {
 					if (res.succeeded()) {
 						System.out.println(res.result().rowCount()+" filas insertadas");
 						long id = res.result().property(MySQLClient.LAST_INSERTED_ID);
 						luz.setIdLuz_Semaforo((int) id);
-						luz.setTimestamp(timest);
 						routingContext.response().setStatusCode(200).putHeader("content-type", "application/json")
 								.end(JsonObject.mapFrom(luz).encodePrettily());
 					} else {
@@ -534,20 +546,36 @@ public class DatabaseVerticle extends AbstractVerticle{
 					}
 				});
 	}
+	private void getValueBySemaforo(RoutingContext routingContext) {
+		mySQLPool.query("SELECT * from luzverde.valor_sensor_contaminacion where idSensor = (SELECT idSensor from sensor where idSemaforo = (SELECT luzverde.semaforo.idSemaforo from semaforo where nombreSemaforo = \"" +routingContext.request().getParam("nombreSemaforo")+"\") and tipoSensor = \"CO2\")", res ->{
+					if(res.succeeded()) {
+						RowSet<Row> resultSet = res.result();
+						System.out.println("El numero de valores obtenidos es "+ resultSet.size());
+						JsonArray result = new JsonArray();
+						for(Row row: resultSet) {
+							result.add(JsonObject.mapFrom(new  ValorSensorContaminacion(row.getInteger("idValor_sensor_contaminacion"),row.getInteger("idSensor"),
+									row.getFloat("value"), row.getInteger("accuracy"), row.getLong("timestamp"))));
+						}
+						routingContext.response().setStatusCode(200).putHeader("content-type", "application/json").end(result.encodePrettily());
+					}else {
+						routingContext.response().setStatusCode(401).putHeader("content-type", "application/json").end(JsonObject.mapFrom(res.cause()).encodePrettily());
+						//System.out.println("Error al hacer la operación");
+						System.out.println("SELECT luzverde.valor_sensor_contaminacion.value from luzverde.valor_sensor_contaminacion where idSensor =");
+					}
+				});
+	}
 	 
 	private void putValorContaminacion(RoutingContext routingContext) {
-		long timest = Calendar.getInstance().getTimeInMillis();
 		ValorSensorContaminacion sensor = Json.decodeValue(routingContext.getBodyAsString(), ValorSensorContaminacion.class);
 		mySQLPool.preparedQuery(
 				"INSERT INTO luzverde.valor_sensor_contaminacion (value, accuracy, timestamp, idSensor) VALUES (?,?,?,?)",
-				Tuple.of(sensor.getValue(),sensor.getAccuracy(),timest,sensor.getIdSensor()),
+				Tuple.of(sensor.getValue(),sensor.getAccuracy(),sensor.getTimestamp(),sensor.getIdSensor()),
 				res -> {
 					if (res.succeeded()) {
 						System.out.println(res.result().rowCount()+" filas insertadas");
 						
 						long id = res.result().property(MySQLClient.LAST_INSERTED_ID);
 						sensor.setIdValor_sensor_contaminacion((int) id);
-						sensor.setTimestamp(timest);
 						
 						routingContext.response().setStatusCode(200).putHeader("content-type", "application/json")
 								.end(JsonObject.mapFrom(sensor).encodePrettily());
@@ -582,18 +610,16 @@ public class DatabaseVerticle extends AbstractVerticle{
 	}
 	
 	private void putValorTempHum(RoutingContext routingContext) {
-		long timest = Calendar.getInstance().getTimeInMillis();
 		ValorSensorTempHum sensor = Json.decodeValue(routingContext.getBodyAsString(), ValorSensorTempHum.class);
 		mySQLPool.preparedQuery(
 				"INSERT INTO luzverde.valor_sensor_temp_hum (valueTemp, accuracyTemp, valueHum, accuracyHum, timestamp, idSensor) VALUES (?,?,?,?,?,?)",
-				Tuple.of(sensor.getValueTemp(),sensor.getAccuracyTemp(),sensor.getValueHum(),sensor.getAccuracyHum(),timest,sensor.getIdSensor()),
+				Tuple.of(sensor.getValueTemp(),sensor.getAccuracyTemp(),sensor.getValueHum(),sensor.getAccuracyHum(),sensor.getTimestamp(),sensor.getIdSensor()),
 				res -> {
 					if (res.succeeded()) {
 						System.out.println(res.result().rowCount()+" filas insertadas");
 						
 						long id = res.result().property(MySQLClient.LAST_INSERTED_ID);
 						sensor.setIdValor_sensor_temp_hum((int) id);
-						sensor.setTimestamp(timest);
 						
 						routingContext.response().setStatusCode(200).putHeader("content-type", "application/json")
 								.end(JsonObject.mapFrom(sensor).encodePrettily());
