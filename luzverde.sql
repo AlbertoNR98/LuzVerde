@@ -125,7 +125,7 @@ CREATE TABLE `sensor` (
 
 LOCK TABLES `sensor` WRITE;
 /*!40000 ALTER TABLE `sensor` DISABLE KEYS */;
-INSERT INTO `sensor` VALUES (1,'TempHum','TempHum1',1),(3,'CO2','ContAire1',1),(4,'Ruido','ContAcust1',1),(5,'CO2','ContAire2',2),(6,'Ruido','ContAcust2',2),(7,'CO2','ContAire3',3),(8,'Ruido','ContAcust3',3),(9,'CO2','ContAire4',4),(10,'Ruido','ContAcust4',4),(11,'TempHum','TempHum2',5),(13,'CO2','ContAire5',5),(14,'Ruido','ContAcust5',5),(15,'CO2','ContAire6',6),(16,'Ruido','ContAcust6',6),(17,'CO2','ContAire7',7),(18,'Ruido','ContAcust7',7),(19,'CO2','ContAire8',8),(20,'Ruido','ContAcust8',8);
+INSERT INTO `sensor` VALUES (1,'TempHum','TempHum1',1),(3,'CO2','ContAire1',1),(5,'CO2','ContAire2',2),(7,'CO2','ContAire3',3),(9,'CO2','ContAire4',4),(11,'TempHum','TempHum2',5),(13,'CO2','ContAire5',5),(15,'CO2','ContAire6',6),(17,'CO2','ContAire7',7),(19,'CO2','ContAire8',8);
 /*!40000 ALTER TABLE `sensor` ENABLE KEYS */;
 UNLOCK TABLES;
 
