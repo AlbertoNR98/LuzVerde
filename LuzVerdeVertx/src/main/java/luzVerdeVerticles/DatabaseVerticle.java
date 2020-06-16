@@ -73,6 +73,7 @@ public class DatabaseVerticle extends AbstractVerticle{
 		router.get("/api/cruces/:idUsuario").handler(this::getCruceByUsuario);
 		router.get("/api/cruces").handler(this::getAllCruces);
 		router.get("/api/cruces/:ipCruce/:nombreCruce").handler(this::getCruceByNombreIp);
+		router.get("/api/cruce/:idCruce").handler(this::getCruceById);
 		router.post("/api/cruces").handler(this::postCruce);
 		router.put("/api/cruces/:idCruce").handler(this::updateCruceByID);
 		router.delete("/api/cruces/:idCruce").handler(this::deleteCruceByID);
@@ -268,6 +269,24 @@ public class DatabaseVerticle extends AbstractVerticle{
 
 	private void getCruceByNombreIp(RoutingContext routingContext) {
 		mySQLPool.query("SELECT * FROM luzverde.cruce where ipCruce = \""+routingContext.request().getParam("ipCruce")+"\"" +" and nombreCruce=  \""+routingContext.request().getParam("nombreCruce")+"\"", res->{
+			if(res.succeeded()) {
+				RowSet<Row> resultSet = res.result();
+				System.out.println("El número de elementos obtenidos es: "+resultSet.size());
+				JsonArray result = new JsonArray();
+				for(Row row : resultSet) {
+					result.add(JsonObject.mapFrom(new Cruce(row.getInteger("idCruce"), row.getString("ipCruce"), row.getString("nombreCruce"),
+									row.getLong("initialTimestamp"), row.getInteger("idUsuario"))));
+				}
+				routingContext.response().setStatusCode(200).putHeader("content-type", "application/json").end(result.encodePrettily());	
+			}else {
+				routingContext.response().setStatusCode(401).putHeader("content-type", "application/json").end((JsonObject.mapFrom(res.cause()).encodePrettily()));
+				System.out.println("Error al hacer la operación");
+			}
+		});
+	}
+	
+	private void getCruceById(RoutingContext routingContext) {
+		mySQLPool.query("SELECT * FROM luzverde.cruce where idCruce = "+routingContext.request().getParam("idCruce"), res->{
 			if(res.succeeded()) {
 				RowSet<Row> resultSet = res.result();
 				System.out.println("El número de elementos obtenidos es: "+resultSet.size());
