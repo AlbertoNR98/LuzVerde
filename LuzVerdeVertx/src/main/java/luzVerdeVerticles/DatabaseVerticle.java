@@ -8,6 +8,9 @@ import luzVerdeTipos.Sensor;
 import luzVerdeTipos.Usuario;
 import luzVerdeTipos.ValorSensorContaminacion;
 import luzVerdeTipos.ValorSensorTempHum;
+
+import java.util.Calendar;
+
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Promise;
 import io.vertx.core.json.Json;
@@ -305,6 +308,7 @@ public class DatabaseVerticle extends AbstractVerticle{
 	
 	private void postCruce(RoutingContext routingContext) {
 		Cruce cruce = Json.decodeValue(routingContext.getBodyAsString(), Cruce.class);
+		cruce.setInitialTimestamp(Calendar.getInstance().getTimeInMillis());
 		mySQLPool.preparedQuery(
 				"INSERT INTO luzverde.cruce (idCruce, ipCruce, nombreCruce, initialTimestamp, idUsuario) VALUES (?,?,?,?,?)",
 				Tuple.of(cruce.getIdCruce(), cruce.getIpCruce(), cruce.getNombreCruce(), cruce.getInitialTimestamp(), cruce.getIdUsuario()),
@@ -487,6 +491,7 @@ public class DatabaseVerticle extends AbstractVerticle{
 	
 	private void putLuz(RoutingContext routingContext) {
 		LuzSemaforo luz = Json.decodeValue(routingContext.getBodyAsString(), LuzSemaforo.class);
+		luz.setTimestamp(Calendar.getInstance().getTimeInMillis());
 		mySQLPool.preparedQuery(
 				"INSERT INTO luzverde.luz_semaforo (color, timestamp, idSemaforo) VALUES (?,?,?)",
 				Tuple.of(luz.getColor(), luz.getTimestamp(), luz.getIdSemaforo()),
@@ -623,6 +628,7 @@ public class DatabaseVerticle extends AbstractVerticle{
 	 
 	private void putValorContaminacion(RoutingContext routingContext) {
 		ValorSensorContaminacion sensor = Json.decodeValue(routingContext.getBodyAsString(), ValorSensorContaminacion.class);
+		sensor.setTimestamp(Calendar.getInstance().getTimeInMillis());
 		mySQLPool.preparedQuery(
 				"INSERT INTO luzverde.valor_sensor_contaminacion (value, accuracy, timestamp, idSensor) VALUES (?,?,?,?)",
 				Tuple.of(sensor.getValue(),sensor.getAccuracy(),sensor.getTimestamp(),sensor.getIdSensor()),
@@ -667,6 +673,7 @@ public class DatabaseVerticle extends AbstractVerticle{
 	
 	private void putValorTempHum(RoutingContext routingContext) {
 		ValorSensorTempHum sensor = Json.decodeValue(routingContext.getBodyAsString(), ValorSensorTempHum.class);
+		sensor.setTimestamp(Calendar.getInstance().getTimeInMillis());
 		mySQLPool.preparedQuery(
 				"INSERT INTO luzverde.valor_sensor_temp_hum (valueTemp, accuracyTemp, valueHum, accuracyHum, timestamp, idSensor) VALUES (?,?,?,?,?,?)",
 				Tuple.of(sensor.getValueTemp(),sensor.getAccuracyTemp(),sensor.getValueHum(),sensor.getAccuracyHum(),sensor.getTimestamp(),sensor.getIdSensor()),

@@ -13,6 +13,6 @@ public class MainVerticle extends AbstractVerticle{
 		//Despliegue de cliente y servidor MQTT
 		//vertx.deployVerticle(MqttServerVerticle.class.getName());
 		//vertx.deployVerticle(MqttClientVerticle.class.getName());
-		vertx.deployVerticle(TelegramVerticle.class.getName());
+		//vertx.deployVerticle(TelegramVerticle.class.getName());
 	}
 }
