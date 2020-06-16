@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "4cfe2c03-3d61-448d-9dcf-fefe158316c2",
+		"_postman_id": "5f68e42c-20f3-4cbf-945e-932bf8d8e7a6",
 		"name": "Pruebas de API REST Luz Verde",
 		"description": "Script con todas las peticiones que se harán para probar la API REST del proyecto Luz Verde",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
@@ -193,7 +193,7 @@
 			"response": []
 		},
 		{
-			"name": "getValueBySensorCont",
+			"name": "getValueBySensor",
 			"request": {
 				"method": "GET",
 				"header": [],
@@ -214,7 +214,7 @@
 			"response": []
 		},
 		{
-			"name": "getValueBySensorTempHum",
+			"name": "getValueBySensor2",
 			"request": {
 				"method": "GET",
 				"header": [],
@@ -270,7 +270,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n\t\"idCruce\": 100,\n\t\"ipCruce\": \"212.212.212.212\",\n\t\"nombreCruce\": \"Avda. Palmera - Cardenal Ilundain\",\n\t\"idUsuario\": 1\n}",
+					"raw": "{\n\t\"idCruce\": 100,\n\t\"ipCruce\": \"212.212.212.212\",\n\t\"nombreCruce\": \"Avda. Palmera - Cardenal Ilundain\",\n\t\"initialTimestamp\": 10000,\n\t\"idUsuario\": 1\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -506,7 +506,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n  \"value\" : 1.9,\r\n  \"accuracy\" : 1.0,\r\n  \"idSensor\" : 3\r\n}",
+					"raw": "{\r\n  \"value\" : 1.9,\r\n  \"accuracy\" : 1.0,\r\n  \"timestamp\" : 999999999,\r\n  \"idSensor\" : 3\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -535,7 +535,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n  \"valueTemp\" : 40.0,\r\n  \"accuracyTemp\" : 1.0,\r\n  \"valueHum\" : 80.0,\r\n  \"accuracyHum\" : 1.0,\r\n  \"idSensor\" : 1\r\n}",
+					"raw": "{\r\n  \"valueTemp\" : 40.0,\r\n  \"accuracyTemp\" : 1.0,\r\n  \"valueHum\" : 80.0,\r\n  \"accuracyHum\" : 1.0,\r\n  \"timestamp\" : 999999999,\r\n  \"idSensor\" : 1\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -600,7 +600,7 @@
 			"response": []
 		},
 		{
-			"name": "deleteSensorByID",
+			"name": "deleteSensorBySemaforo",
 			"request": {
 				"method": "DELETE",
 				"header": [],
@@ -617,6 +617,109 @@
 					]
 				},
 				"description": "Borra los sensores de un semáforo concreto"
+			},
+			"response": []
+		},
+		{
+			"name": "getCruceById",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:8082/api/cruce/2",
+					"host": [
+						"localhost"
+					],
+					"port": "8082",
+					"path": [
+						"api",
+						"cruce",
+						"2"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "getCruceByNombreip",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:8082/api/cruces/100.100.100.101/Avda. Palmera - Cardenal Ilundain",
+					"host": [
+						"localhost"
+					],
+					"port": "8082",
+					"path": [
+						"api",
+						"cruces",
+						"100.100.100.101",
+						"Avda. Palmera - Cardenal Ilundain"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "getIdByDni",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:8082/api/usuarios/987226541F",
+					"host": [
+						"localhost"
+					],
+					"port": "8082",
+					"path": [
+						"api",
+						"usuarios",
+						"987226541F"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "getIdByIdNom",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:8082/api/semaforos/2/AVP1",
+					"host": [
+						"localhost"
+					],
+					"port": "8082",
+					"path": [
+						"api",
+						"semaforos",
+						"2",
+						"AVP1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "getValueBySemaforo",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:8082/api/valores_sensor_contaminacion/AVP1/CO2",
+					"host": [
+						"localhost"
+					],
+					"port": "8082",
+					"path": [
+						"api",
+						"valores_sensor_contaminacion",
+						"AVP1",
+						"CO2"
+					]
+				}
 			},
 			"response": []
 		}
