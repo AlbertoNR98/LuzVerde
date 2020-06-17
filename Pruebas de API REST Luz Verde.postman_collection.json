@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "5f68e42c-20f3-4cbf-945e-932bf8d8e7a6",
+		"_postman_id": "e28b0772-6f29-47f8-b1be-91631f892408",
 		"name": "Pruebas de API REST Luz Verde",
 		"description": "Script con todas las peticiones que se harán para probar la API REST del proyecto Luz Verde",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
@@ -193,7 +193,49 @@
 			"response": []
 		},
 		{
-			"name": "getValueBySensor",
+			"name": "getSensorBySemaforoAndTipo",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:8082/api/sensores/5/CO2",
+					"host": [
+						"localhost"
+					],
+					"port": "8082",
+					"path": [
+						"api",
+						"sensores",
+						"5",
+						"CO2"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "getValueBySemaforo",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:8082/api/valores_sensor_contaminacion/AVP1/CO2",
+					"host": [
+						"localhost"
+					],
+					"port": "8082",
+					"path": [
+						"api",
+						"valores_sensor_contaminacion",
+						"AVP1",
+						"CO2"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "getValueBySensorContaminacion",
 			"request": {
 				"method": "GET",
 				"header": [],
@@ -214,7 +256,7 @@
 			"response": []
 		},
 		{
-			"name": "getValueBySensor2",
+			"name": "getValueBySensorTempHum",
 			"request": {
 				"method": "GET",
 				"header": [],
@@ -231,6 +273,88 @@
 					]
 				},
 				"description": "Obtiene los valores de un sensor de temperatura determinado"
+			},
+			"response": []
+		},
+		{
+			"name": "getCruceById",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:8082/api/cruce/2",
+					"host": [
+						"localhost"
+					],
+					"port": "8082",
+					"path": [
+						"api",
+						"cruce",
+						"2"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "getCruceByNombreIp",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:8082/api/cruces/100.100.100.101/Avda. Palmera - Cardenal Ilundain",
+					"host": [
+						"localhost"
+					],
+					"port": "8082",
+					"path": [
+						"api",
+						"cruces",
+						"100.100.100.101",
+						"Avda. Palmera - Cardenal Ilundain"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "getIdByIdNom",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:8082/api/semaforos/2/AVP1",
+					"host": [
+						"localhost"
+					],
+					"port": "8082",
+					"path": [
+						"api",
+						"semaforos",
+						"2",
+						"AVP1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "getIdByDni",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:8082/api/usuarios/987226541F",
+					"host": [
+						"localhost"
+					],
+					"port": "8082",
+					"path": [
+						"api",
+						"usuarios",
+						"987226541F"
+					]
+				}
 			},
 			"response": []
 		},
@@ -619,116 +743,13 @@
 				"description": "Borra los sensores de un semáforo concreto"
 			},
 			"response": []
-		},
-		{
-			"name": "getCruceById",
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "localhost:8082/api/cruce/2",
-					"host": [
-						"localhost"
-					],
-					"port": "8082",
-					"path": [
-						"api",
-						"cruce",
-						"2"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "getCruceByNombreip",
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "localhost:8082/api/cruces/100.100.100.101/Avda. Palmera - Cardenal Ilundain",
-					"host": [
-						"localhost"
-					],
-					"port": "8082",
-					"path": [
-						"api",
-						"cruces",
-						"100.100.100.101",
-						"Avda. Palmera - Cardenal Ilundain"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "getIdByDni",
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "localhost:8082/api/usuarios/987226541F",
-					"host": [
-						"localhost"
-					],
-					"port": "8082",
-					"path": [
-						"api",
-						"usuarios",
-						"987226541F"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "getIdByIdNom",
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "localhost:8082/api/semaforos/2/AVP1",
-					"host": [
-						"localhost"
-					],
-					"port": "8082",
-					"path": [
-						"api",
-						"semaforos",
-						"2",
-						"AVP1"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "getValueBySemaforo",
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "localhost:8082/api/valores_sensor_contaminacion/AVP1/CO2",
-					"host": [
-						"localhost"
-					],
-					"port": "8082",
-					"path": [
-						"api",
-						"valores_sensor_contaminacion",
-						"AVP1",
-						"CO2"
-					]
-				}
-			},
-			"response": []
 		}
 	],
 	"event": [
 		{
 			"listen": "prerequest",
 			"script": {
-				"id": "478abc57-6d85-42f7-a3fd-f891f1f75748",
+				"id": "e410c489-c3e7-4a5a-b246-0b7891bc420a",
 				"type": "text/javascript",
 				"exec": [
 					""
@@ -738,7 +759,7 @@
 		{
 			"listen": "test",
 			"script": {
-				"id": "4ce33b3d-085f-4234-8759-30244eb0d666",
+				"id": "8240e89f-dd91-462b-bc8e-dbdf3bd2490b",
 				"type": "text/javascript",
 				"exec": [
 					""
