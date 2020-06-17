@@ -41,7 +41,7 @@ CREATE TABLE `cruce` (
 
 LOCK TABLES `cruce` WRITE;
 /*!40000 ALTER TABLE `cruce` DISABLE KEYS */;
-INSERT INTO `cruce` VALUES (1,'100.100.100.100','Avda. Palmera - Luca de Tena',111111111,1),(2,'100.100.100.101','Avda. Palmera - Cardenal Ilundain',111111112,2);
+INSERT INTO `cruce` VALUES (11935598,'100.100.100.100','Avda. Palmera - Luca de Tena',111111111,1),(2,'100.100.100.101','Avda. Palmera - Cardenal Ilundain',111111112,2);
 /*!40000 ALTER TABLE `cruce` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -97,7 +97,7 @@ CREATE TABLE `semaforo` (
 
 LOCK TABLES `semaforo` WRITE;
 /*!40000 ALTER TABLE `semaforo` DISABLE KEYS */;
-INSERT INTO `semaforo` VALUES (1,1,'AVP1'),(2,1,'AVP2'),(3,1,'MS1'),(4,1,'MS2'),(5,2,'AVP1'),(6,2,'AVP2'),(7,2,'CI1'),(8,2,'CI2');
+INSERT INTO `semaforo` VALUES (1,11935598,'AVP1'),(2,11935598,'AVP2'),(3,11935598,'MS1'),(4,11935598,'MS2'),(5,2,'AVP1'),(6,2,'AVP2'),(7,2,'CI1'),(8,2,'CI2');
 /*!40000 ALTER TABLE `semaforo` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -125,7 +125,7 @@ CREATE TABLE `sensor` (
 
 LOCK TABLES `sensor` WRITE;
 /*!40000 ALTER TABLE `sensor` DISABLE KEYS */;
-INSERT INTO `sensor` VALUES (1,'TempHum','TempHum1',1),(3,'CO2','ContAire1',1),(5,'CO2','ContAire2',2),(7,'CO2','ContAire3',3),(9,'CO2','ContAire4',4),(11,'TempHum','TempHum2',5),(13,'CO2','ContAire5',5),(15,'CO2','ContAire6',6),(17,'CO2','ContAire7',7),(19,'CO2','ContAire8',8);
+INSERT INTO `sensor` VALUES (1,'TempHum','TempHum1',1),(2,'CO2','ContAire1',1),(3,'TempHum','TempHum2',2),(4,'CO2','ContAire2',2),(5,'TempHum','TempHum3',3),(6,'CO2','ContAire3',3),(7,'TempHum','TempHum4',4),(8,'CO2','ContAire4',4),(9,'TempHum','TempHum5',5),(10,'CO2','ContAire5',5),(11,'TempHum','TempHum6',6),(12,'CO2','ContAire6',6),(13,'TempHum','TempHum7',7),(14,'CO2','ContAire7',7),(15,'TempHum','TempHum8',8),(16,'CO2','ContAire8',8);
 /*!40000 ALTER TABLE `sensor` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -152,7 +152,7 @@ CREATE TABLE `usuario` (
 
 LOCK TABLES `usuario` WRITE;
 /*!40000 ALTER TABLE `usuario` DISABLE KEYS */;
-INSERT INTO `usuario` VALUES (1,'Alberto','Naranjo','12345698X',161098),(2,'José Joaquín','Comitre','9876541',181099);
+INSERT INTO `usuario` VALUES (1,'Alberto','Naranjo','12345698X',161098),(2,'José Joaquín','Comitre','9876541F',181099);
 /*!40000 ALTER TABLE `usuario` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -181,7 +181,7 @@ CREATE TABLE `valor_sensor_contaminacion` (
 
 LOCK TABLES `valor_sensor_contaminacion` WRITE;
 /*!40000 ALTER TABLE `valor_sensor_contaminacion` DISABLE KEYS */;
-INSERT INTO `valor_sensor_contaminacion` VALUES (1,1.6,1,99999999,3),(2,1.1,1,99999999,4),(3,1.8,1,99999999,5),(4,1.9,1,99999999,6),(5,2.2,1,99999999,7),(6,3.2,1,99999999,8),(7,1.1,1,99999999,9),(8,2.2,1,99999999,10),(9,1.15,1,99999999,13),(10,2.05,1,99999999,14),(11,3.02,1,99999999,15),(12,2.33,1,99999999,16),(13,2.44,1,99999999,17),(14,3.05,1,99999999,18),(15,0.95,1,99999999,19),(16,2.69,1,99999999,20);
+INSERT INTO `valor_sensor_contaminacion` VALUES (1,1.6,1,99999999,2),(2,1.1,1,99999999,4),(3,1.8,1,99999999,6),(4,1.9,1,99999999,8),(5,2.2,1,99999999,10),(6,3.2,1,99999999,12),(7,1.1,1,99999999,14),(8,2.2,1,99999999,16),(9,1.15,1,99999999,2),(10,2.05,1,99999999,4),(11,3.02,1,99999999,6),(12,2.33,1,99999999,8),(13,2.44,1,99999999,10),(14,3.05,1,99999999,12),(15,0.95,1,99999999,14),(16,2.69,1,99999999,16);
 /*!40000 ALTER TABLE `valor_sensor_contaminacion` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -212,7 +212,7 @@ CREATE TABLE `valor_sensor_temp_hum` (
 
 LOCK TABLES `valor_sensor_temp_hum` WRITE;
 /*!40000 ALTER TABLE `valor_sensor_temp_hum` DISABLE KEYS */;
-INSERT INTO `valor_sensor_temp_hum` VALUES (1,30,2,50,5,33333333,1),(2,31,2,40,3,33333333,11);
+INSERT INTO `valor_sensor_temp_hum` VALUES (1,30,2,50,5,33333333,1),(2,31,2,40,3,33333333,3),(3,31,2,40,3,33333333,5),(4,31,2,40,3,33333333,7);
 /*!40000 ALTER TABLE `valor_sensor_temp_hum` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
