@@ -344,22 +344,22 @@ public class TelegramVerticle extends AbstractVerticle {
 							}
 						});
 						tokenRegSen=true;
-					}else if(tokenRegCruce == true && tokenRegSem==false && tokenRegSen == true && idReg!="" && (handler.getMessage().getText().toLowerCase().startsWith("t"))) {
+					}else if(tokenRegCruce == true && tokenRegSem==false && tokenRegSen == true && idReg!="" && (handler.getMessage().getText().toLowerCase().startsWith("temphum"))) {
 						String [] regSens = handler.getMessage().getText().split("\\n");
 						WebClient client = WebClient.create(vertx);
 						client.post(8082,"localhost","/api/sensores")
-						.sendJsonObject(new JsonObject().put("tipoSensor", regSens[0]).put("nombreSensor", regSens[1]).put("idSemaforo", idSem), ar->{
+						.sendJsonObject(new JsonObject().put("tipoSensor", "TempHum").put("nombreSensor", regSens[1]).put("idSemaforo", idSem), ar->{
 							if(ar.succeeded()) {
 								bot.sendMessage(new SendMessage().setText("Primer sensor registrado con éxito").setChatId(handler.getMessage().getChatId()));
 							}else {
 								bot.sendMessage(new SendMessage().setText("Error al registrar el primer sensor").setChatId(handler.getMessage().getChatId()));
 							}
 						});					
-					}else if(handler.getMessage().getText().toLowerCase().startsWith("c") && tokenRegCruce == true && tokenRegSem==false && tokenRegSen == true && idReg!="") {
+					}else if(handler.getMessage().getText().toLowerCase().startsWith("co2") && tokenRegCruce == true && tokenRegSem==false && tokenRegSen == true && idReg!="") {
 						String[]regSens =handler.getMessage().getText().split("\\n");
 						WebClient client =WebClient.create(vertx);
 						client.post(8082,"localhost","/api/sensores")
-						.sendJsonObject(new JsonObject().put("tipoSensor", regSens[0]).put("nombreSensor", regSens[1]).put("idSemaforo", idSem), ar->{
+						.sendJsonObject(new JsonObject().put("tipoSensor", "CO2").put("nombreSensor", regSens[1]).put("idSemaforo", idSem), ar->{
 							if(ar.succeeded()) {
 								bot.sendMessage(new SendMessage().setText("Segundo sensor registrado con éxito. Si ambos han sido registrados con éxito, pulse en el siguiente comando: /regsem").setChatId(handler.getMessage().getChatId()));
 								tokenRegSen=false;

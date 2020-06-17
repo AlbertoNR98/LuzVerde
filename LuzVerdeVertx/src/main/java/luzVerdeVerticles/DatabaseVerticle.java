@@ -61,6 +61,8 @@ public class DatabaseVerticle extends AbstractVerticle{
 			//Usuario
 		router.route("/api/usuarios").handler(BodyHandler.create());
 		router.route("/api/usuarios*").handler(BodyHandler.create());
+		router.route("/api/usuario").handler(BodyHandler.create());
+		router.route("/api/usuario*").handler(BodyHandler.create());
 		
 		router.get("/api/usuarios/:idUsuario").handler(this::getUserByID);
 		router.get("/api/usuario/:dni").handler(this::getIdByDni);
@@ -72,11 +74,13 @@ public class DatabaseVerticle extends AbstractVerticle{
 			//Cruce
 		router.route("/api/cruces").handler(BodyHandler.create());
 		router.route("/api/cruces*").handler(BodyHandler.create());
+		router.route("/api/cruce").handler(BodyHandler.create());
+		router.route("/api/cruce*").handler(BodyHandler.create());
 		
+		router.get("/api/cruce/:idCruce").handler(this::getCruceById);
 		router.get("/api/cruces/:idUsuario").handler(this::getCruceByUsuario);
 		router.get("/api/cruces").handler(this::getAllCruces);
 		router.get("/api/cruces/:ipCruce/:nombreCruce").handler(this::getCruceByNombreIp);
-		router.get("/api/cruce/:idCruce").handler(this::getCruceById);
 		router.post("/api/cruces").handler(this::postCruce);
 		router.put("/api/cruces/:idCruce").handler(this::updateCruceByID);
 		router.delete("/api/cruces/:idCruce").handler(this::deleteCruceByID);
@@ -103,6 +107,7 @@ public class DatabaseVerticle extends AbstractVerticle{
 		router.route("/api/sensores").handler(BodyHandler.create());
 		router.route("/api/sensores*").handler(BodyHandler.create());
 		
+		router.get("/api/sensores/:idSemaforo/:tipoSensor").handler(this::getSensorBySemaforoAndTipo);
 		router.get("/api/sensores/:idSemaforo").handler(this::getSensorBySemaforo);
 		router.post("/api/sensores").handler(this::postSensor);
 		router.put("/api/sensores/:idSensor").handler(this::updateSensorByID);
@@ -512,6 +517,26 @@ public class DatabaseVerticle extends AbstractVerticle{
 	}
 	
 		//Sensores
+		private void getSensorBySemaforoAndTipo (RoutingContext routingContext) {
+			mySQLPool.query("SELECT * FROM luzverde.sensor WHERE idSemaforo = " + routingContext.request().getParam("idSemaforo") + " AND tipoSensor = \""+routingContext.request().getParam("tipoSensor")+"\"", 
+					res ->{
+						if(res.succeeded()) {
+							RowSet<Row>  resultSet = res.result();
+							System.out.println("El numero de elementos obtenidos es "+ resultSet.size());
+							JsonArray result = new JsonArray();
+							for (Row row : resultSet) {
+								result.add(JsonObject.mapFrom(new Sensor(row.getInteger("idSensor"), row.getString("tipoSensor"), row.getString("nombreSensor"), 
+										row.getInteger("idSemaforo"))));
+							}
+							
+							routingContext.response().setStatusCode(200).putHeader("content-type", "application/json").end(result.encodePrettily());						
+						}else {
+							routingContext.response().setStatusCode(401).putHeader("content-type", "application/json").end((JsonObject.mapFrom(res.cause()).encodePrettily()));
+							System.out.println("Error al hacer la operación");
+						}
+					});
+		}
+		
 		private void getSensorBySemaforo (RoutingContext routingContext) {
 			mySQLPool.query("SELECT * FROM luzverde.sensor WHERE idSemaforo = "+ routingContext.request().getParam("idSemaforo"), 
 					res -> {
