@@ -1,4 +1,5 @@
 #include <Arduino.h>
+#define ARDUINOJSON_USE_LONG_LONG 1
 #include "ArduinoJson.h"
 #include <ESP8266WiFi.h>
 #include <ESP8266HTTPClient.h>
@@ -32,7 +33,7 @@ DHT dht(DHTPin, DHTTYPE);
 int idCruce = (int)ESP.getChipId();
 String nombreCruce = "";
 String ipCruce = "";
-long initialTimestamp = -1;
+long long initialTimestamp = 1;
 int idUsuario = -1;
 bool registrado = false;  //La placa solo funciona si el proceso de registro ha sido correcto
 int idSemaforos[4]; //Guarda los ID de los semáforos asociados a la placa
@@ -244,14 +245,13 @@ bool compruebaRegistro(){
     idC = doc[0]["idCruce"].as<int>();
     ipCruce = doc[0]["ipCruce"].as<char*>();
     nombreCruce = doc[0]["nombreCruce"].as<char*>();
-    initialTimestamp = doc[0]["initialTimestamp"].as<long>();
+    initialTimestamp = doc[0]["initialTimestamp"].as<long long>();
     idUsuario = doc[0]["idUsuario"].as<int>();
 
     if(idC == idCruce){
       Serial.println("\n-------Cruce con ID " + String(idC)+" encontrado-------");
       Serial.println("\tIP asignada: "+ipCruce);
       Serial.println("\tNombre del cruce: "+nombreCruce);
-      Serial.println("\tTimestamp inicial: "+String(initialTimestamp));
       Serial.println("\tUsuario que lo ha introducido: "+String(idUsuario));
       res = true;
     }else{
